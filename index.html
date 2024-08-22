@@ -1,282 +1,2023 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <title>Mines</title>
-    <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900" rel="stylesheet">
-    <style>
-        @font-face {
-            font-family: 'Intro';
-            src: url('intro.otf') format('opentype');
-        }
-
-        body {
-            background-image: url('fon.jpg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        .main-container {
-            width: 80%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background-color: #0a101e;
-            border-radius: 30px;
-            padding: 20px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1), 0 0 20px 10px #ffa500;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(5, 110px);
-            grid-template-rows: repeat(5, 110px);
-            gap: 19px;
-        }
-
-        .square {
-            background-color: #238fa9;
-            border-radius: 10px;
-            transition: background-color 0.5s ease;
-        }
-
-        button {
-            width: 100%;
-            margin-top: 25px;
-            padding: 8%;
-            border: none;
-            border-radius: 15px;
-            background: linear-gradient(to right, #57c1eb, #246fa8);
-            color: white;
-            font-size: 32px;
-            cursor: pointer;
-            transition: all 0.3s ease, transform 0.2s ease-out;
-            box-shadow: 0 5px 9px rgba(0, 0, 0, 0.2);
-            font-family: 'Intro', sans-serif;
-            text-align: center;
-            line-height: 1.2;
-        }
-
-        button:hover,
-        button:focus {
-            background: linear-gradient(to right, #4ebbf1, #1a5f97);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-            transform: translateY(-2px);
-        }
-
-        button:active {
-            background-color: #004885;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            transform: translateY(1px);
-        }
-
-        #trap-count-label {
-            margin-top: 50px;
-            font-size: 70px;
-            color: white;
-            font-family: 'Intro', sans-serif;
-            font-weight: bold;
-        }
-
-        #counter-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 10px 0;
-        }
-
-        .count-display {
-            width: 80px;
-            text-align: center;
-            font-size: 80px;
-            font-family: 'Intro', sans-serif;
-            color: white;
-            margin: 0 30px;
-        }
-
-        .icon {
-            cursor: pointer;
-            width: 114px;
-            height: 114px;
-        }
-
-        #loading-text {
-            cursor: default;
-            text-align: center;
-            margin-bottom: 20px;
-            font-family: 'Intro', sans-serif;
-        }
-
-        #loading-text span {
-            display: inline-block;
-            animation: bounce 0.3s ease infinite alternate;
-            font-size: 120px;
-            color: #ffffff;
-            text-shadow: 0 1px 0 #ccc, 0 2px 0 #ccc, 0 3px 0 #ccc, 0 4px 0 #ccc,
-                0 5px 0 #ccc, 0 6px 0 transparent, 0 7px 0 transparent, 0 8px 0 transparent,
-                0 9px 0 transparent, 0 10px 10px rgba(0, 0, 0, 0.4);
-        }
-
-        #loading-text span:nth-child(1) {
-            animation-delay: 0s;
-        }
-
-        #loading-text span:nth-child(2) {
-            animation-delay: 0.1s;
-        }
-
-        #loading-text span:nth-child(3) {
-            animation-delay: 0.2s;
-        }
-
-        #loading-text span:nth-child(4) {
-            animation-delay: 0.3s;
-        }
-
-        #loading-text span:nth-child(5) {
-            animation-delay: 0.4s;
-        }
-
-        #loading-text span:nth-child(6) {
-            animation-delay: 0.5s;
-        }
-
-        #loading-text span:nth-child(7) {
-            animation-delay: 0.6s;
-        }
-
-        @keyframes bounce {
-            0% {
-                transform: translateY(0px);
-                text-shadow: 0 1px 0 #ccc, 0 2px 0 #ccc, 0 3px 0 #ccc, 0 4px 0 #ccc,
-                    0 5px 0 #ccc, 0 6px 0 transparent, 0 7px 0 transparent, 0 8px 0 transparent,
-                    0 9px 0 transparent, 0 10px 10px rgba(0, 0, 0, 0.4);
-            }
-
-            100% {
-                transform: translateY(-20px);
-                text-shadow: 0 1px 0 #ccc, 0 2px 0 #ccc, 0 3px 0 #ccc, 0 4px 0 #ccc,
-                    0 5px 0 #ccc, 0 6px 0 transparent, 0 7px 0 transparent, 0 8px 0 transparent,
-                    0 9px 0 transparent, 0 50px 25px rgba(0, 0, 0, 0.2);
-            }
-        }
-
-        .slider {
-            -webkit-appearance: none;
-            width: 600px;
-            /* Увеличенная длина слайдера */
-            height: 30px;
-            /* Увеличенная высота слайдера */
-            background: linear-gradient(to right, #57c1eb, #246fa8);
-            outline: none;
-            opacity: 0.9;
-            transition: opacity .4s ease, background 0.4s ease;
-            border-radius: 14px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.16);
-        }
-
-        .slider:hover {
-            opacity: 1;
-            background: linear-gradient(to right, #4ebbf1, #1a5f97);
-        }
-
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 75px;
-            /* Увеличенная ширина ползунка */
-            height: 75px;
-            /* Увеличенная высота ползунка */
-            border-radius: 50%;
-            background: #fff;
-            cursor: pointer;
-            box-shadow: 0 0 30px 12px rgba(0, 0, 0, 0.25);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .slider::-webkit-slider-thumb:hover {
-            transform: scale(1.15);
-            box-shadow: 0 0 36px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .slider::-moz-range-thumb {
-            width: 75px;
-            /* Увеличенная ширина ползунка */
-            height: 75px;
-            /* Увеличенная высота ползунка */
-            border-radius: 50%;
-            background: #fff;
-            cursor: pointer;
-            box-shadow: 0 0 30px 12px rgba(0, 0, 0, 0.25);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .slider::-moz-range-thumb:hover {
-            transform: scale(1.15);
-            box-shadow: 0 0 36px 15px rgba(0, 0, 0, 0.3);
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./mines.css">
+    <script src="tg.js"></script>
+    <script src="script.js"> </script>
 </head>
 
-<body>
 
-    <div class="main-container">
-        <h1 id="loading-text">
-            <span>M</span><span>I</span><span>N</span><span>E</span><span>S</span>
-        </h1>
-        <div class="container">
-            <div class="grid" id="grid">
-                <!-- Квадраты будут добавлены здесь с помощью JavaScript -->
-            </div>
-        </div>
-        <div id="trap-count-label">NUMBER OF TRAPS</div>
-        <div id="counter-container">
-            <input type="range" min="1" max="7" step="2" value="3" class="slider" id="trapSlider">
-            <div id="slider-value" class="count-display">3</div>
-        </div>
-        <button onclick="getSignal()" id="btn-signal">GET SIGNAL</button>
-        <div style="margin-left: auto;
-        margin-right: auto;
-        font-weight: 700;
-        color: white;
-        font-size: 6rem;
-        position: absolute;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        bottom: 5%;
-        ">
-            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="90" height="90" viewBox="0 0 48 48">
-                <path fill="#29b6f6" d="M24,4C13,4,4,13,4,24s9,20,20,20s20-9,20-20S35,4,24,4z"></path>
-                <path fill="#fff"
-                    d="M34,15l-3.7,19.1c0,0-0.2,0.9-1.2,0.9c-0.6,0-0.9-0.3-0.9-0.3L20,28l-4-2l-5.1-1.4c0,0-0.9-0.3-0.9-1	c0-0.6,0.9-0.9,0.9-0.9l21.3-8.5c0,0,0.7-0.2,1.1-0.2c0.3,0,0.6,0.1,0.6,0.5C34,14.8,34,15,34,15z">
-                </path>
-                <path fill="#b0bec5" d="M23,30.5l-3.4,3.4c0,0-0.1,0.1-0.3,0.1c-0.1,0-0.1,0-0.2,0l1-6L23,30.5z"></path>
-                <path fill="#cfd8dc"
-                    d="M29.9,18.2c-0.2-0.2-0.5-0.3-0.7-0.1L16,26c0,0,2.1,5.9,2.4,6.9c0.3,1,0.6,1,0.6,1l1-6l9.8-9.1	C30,18.7,30.1,18.4,29.9,18.2z">
-                </path>
-            </svg>
-            <span id="botName" style="text-transform: uppercase;"></span>
-        </div>
+<div class="preloader">
+
+    <div class="preload-container">
+        <p
+            style="transform: translateY(-50%); text-transform: uppercase; font-weight: 900; font-size: 2rem; color: white; display: flex; justify-content: end;">
+            <svg width="32" height="32" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M12.2752 2.2285C12.6529 1.48818 13.7108 1.48818 14.0885 2.2285L16.735 7.41481C16.8829 7.70466 17.1604 7.90633 17.4818 7.95743L23.2321 8.87169C24.0529 9.0022 24.3798 10.0082 23.7924 10.5963L19.6778 14.7159C19.4478 14.9461 19.3418 15.2724 19.3925 15.5938L20.2999 21.3452C20.4294 22.1662 19.5736 22.7879 18.8329 22.4111L13.6434 19.7708C13.3534 19.6232 13.0103 19.6232 12.7203 19.7708L7.53081 22.4111C6.79004 22.7879 5.93424 22.1662 6.06377 21.3452L6.97119 15.5938C7.0219 15.2724 6.91588 14.9461 6.68592 14.7159L2.57124 10.5963C1.98389 10.0082 2.31077 9.0022 3.1316 8.87169L8.88187 7.95743C9.20324 7.90633 9.48081 7.70466 9.62872 7.41481L12.2752 2.2285Z"
+                    fill="#C22A20"></path>
+                <path
+                    d="M12.2752 2.2285C12.6529 1.48818 13.7108 1.48818 14.0885 2.2285L16.735 7.41481C16.8829 7.70466 17.1604 7.90633 17.4818 7.95743L23.2321 8.87169C24.0529 9.0022 24.3798 10.0082 23.7924 10.5963L19.6778 14.7159C19.4478 14.9461 19.3418 15.2724 19.3925 15.5938L20.2999 21.3452C20.4294 22.1662 19.5736 22.7879 18.8329 22.4111L13.6434 19.7708C13.3534 19.6232 13.0103 19.6232 12.7203 19.7708L7.53081 22.4111C6.79004 22.7879 5.93424 22.1662 6.06377 21.3452L6.97119 15.5938C7.0219 15.2724 6.91588 14.9461 6.68592 14.7159L2.57124 10.5963C1.98389 10.0082 2.31077 9.0022 3.1316 8.87169L8.88187 7.95743C9.20324 7.90633 9.48081 7.70466 9.62872 7.41481L12.2752 2.2285Z"
+                    fill="url(#paint0_linear_448_8887status)"></path>
+                <path
+                    d="M12.2754 2.22809C12.6531 1.48777 13.711 1.48777 14.0887 2.22809L16.7352 7.4144C16.8831 7.70426 17.1607 7.90592 17.482 7.95702L23.2323 8.87128C24.0531 9.00179 24.38 10.0078 23.7927 10.5959L19.678 14.7155C19.448 14.9457 19.342 15.272 19.3927 15.5934L20.3001 21.3448C20.4297 22.1658 19.5739 22.7875 18.8331 22.4107L13.6436 19.7704C13.3536 19.6228 13.0105 19.6228 12.7205 19.7704L7.53102 22.4107C6.79025 22.7875 5.93445 22.1658 6.06398 21.3448L6.9714 15.5934C7.02211 15.272 6.91609 14.9457 6.68613 14.7155L2.57145 10.5959C1.9841 10.0078 2.31098 9.00179 3.13181 8.87128L8.88208 7.95702C9.20345 7.90592 9.48102 7.70426 9.62893 7.4144L12.2754 2.22809Z"
+                    fill="url(#paint1_linear_448_8887status)"></path>
+                <path
+                    d="M12.2754 2.22809C12.6531 1.48777 13.711 1.48777 14.0887 2.22809L16.7352 7.4144C16.8831 7.70426 17.1607 7.90592 17.482 7.95702L23.2323 8.87128C24.0531 9.00179 24.38 10.0078 23.7927 10.5959L19.678 14.7155C19.448 14.9457 19.342 15.272 19.3927 15.5934L20.3001 21.3448C20.4297 22.1658 19.5739 22.7875 18.8331 22.4107L13.6436 19.7704C13.3536 19.6228 13.0105 19.6228 12.7205 19.7704L7.53102 22.4107C6.79025 22.7875 5.93445 22.1658 6.06398 21.3448L6.9714 15.5934C7.02211 15.272 6.91609 14.9457 6.68613 14.7155L2.57145 10.5959C1.9841 10.0078 2.31098 9.00179 3.13181 8.87128L8.88208 7.95702C9.20345 7.90592 9.48102 7.70426 9.62893 7.4144L12.2754 2.22809Z"
+                    fill="url(#paint2_radial_448_8887status)"></path>
+                <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M16.433 7.56862L13.7865 2.38231C13.5347 1.88876 12.8294 1.88876 12.5776 2.38231L9.93115 7.56862C9.73395 7.95509 9.36385 8.22398 8.93536 8.29211L3.18509 9.20637C2.63787 9.29338 2.41995 9.96407 2.81151 10.3561L6.92619 14.4757C7.23281 14.7827 7.37417 15.2177 7.30655 15.6463L6.39914 21.3977C6.31278 21.945 6.88331 22.3595 7.37716 22.1082L12.5666 19.468C12.9533 19.2712 13.4108 19.2712 13.7975 19.468L18.9869 22.1082C19.4808 22.3595 20.0513 21.945 19.965 21.3977L19.0576 15.6463C18.9899 15.2177 19.1313 14.7827 19.4379 14.4757L23.5526 10.3561C23.9442 9.96407 23.7262 9.29338 23.179 9.20637L17.4287 8.29211C17.0003 8.22398 16.6302 7.95509 16.433 7.56862ZM14.0887 2.22809C13.711 1.48777 12.6531 1.48777 12.2754 2.22809L9.62893 7.4144C9.48102 7.70426 9.20345 7.90592 8.88208 7.95702L3.13181 8.87128C2.31098 9.00179 1.9841 10.0078 2.57145 10.5959L6.68613 14.7155C6.91609 14.9457 7.02211 15.272 6.9714 15.5934L6.06398 21.3448C5.93445 22.1658 6.79025 22.7875 7.53102 22.4107L12.7205 19.7704C13.0105 19.6228 13.3536 19.6228 13.6436 19.7704L18.8331 22.4107C19.5739 22.7875 20.4297 22.1658 20.3001 21.3448L19.3927 15.5934C19.342 15.272 19.448 14.9457 19.678 14.7155L23.7927 10.5959C24.38 10.0078 24.0531 9.00179 23.2323 8.87128L17.482 7.95702C17.1607 7.90592 16.8831 7.70426 16.7352 7.4144L14.0887 2.22809Z"
+                    fill="url(#paint3_linear_448_8887status)"></path>
+                <path
+                    d="M12.741 7.3195C12.937 6.98075 13.4261 6.98075 13.6221 7.3195L15.1721 9.99846C15.2442 10.123 15.3656 10.2113 15.5063 10.2413L18.5331 10.8876C18.9159 10.9693 19.067 11.4344 18.8054 11.7255L16.7365 14.0275C16.6403 14.1345 16.594 14.2773 16.6089 14.4204L16.9296 17.4988C16.9701 17.8881 16.5745 18.1755 16.2168 18.0167L13.3882 16.7604C13.2566 16.702 13.1065 16.702 12.975 16.7604L10.1464 18.0167C9.7887 18.1755 9.39305 17.8881 9.4336 17.4988L9.75428 14.4204C9.7692 14.2773 9.72281 14.1345 9.62661 14.0275L7.55775 11.7255C7.29613 11.4344 7.44726 10.9693 7.83001 10.8876L10.8568 10.2413C10.9976 10.2113 11.119 10.123 11.1911 9.99846L12.741 7.3195Z"
+                    fill="url(#paint4_linear_448_8887status)"></path>
+                <path
+                    d="M19.6431 11.3076C13.5027 17.1102 8.01855 14.5437 6.04404 12.5351C3.04056 8.07161 9.63153 11.6424 15.4716 10.0802C20.1437 8.83037 20.1993 10.3777 19.6431 11.3076Z"
+                    fill="url(#paint5_linear_448_8887status)"></path>
+                <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M12.486 3.38311C12.6114 3.44656 12.6616 3.59966 12.5981 3.72506L11.8786 5.14712C11.8152 5.27252 11.6621 5.32275 11.5367 5.2593C11.4113 5.19585 11.3611 5.04275 11.4245 4.91735L12.144 3.49529C12.2075 3.36989 12.3606 3.31966 12.486 3.38311Z"
+                    fill="#F9BE76"></path>
+                <circle cx="3.68131" cy="9.52742" r="0.254474" fill="#F9BE76"></circle>
+                <circle cx="11.3155" cy="5.62557" r="0.254474" fill="#F9BE76"></circle>
+                <path
+                    d="M10.7514 8.25268C8.82111 10.9869 9.51093 12.4755 10.0971 12.8781C11.8774 13.6816 15.1214 8.94033 15.3409 7.68564C15.5604 6.43095 13.1642 4.83492 10.7514 8.25268Z"
+                    fill="url(#paint6_linear_448_8887status)" fill-opacity="0.6"></path>
+                <defs>
+                    <linearGradient id="paint0_linear_448_8887status" x1="13.1818" y1="0.45166" x2="18.8651"
+                        y2="22.4213" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#FBA416" stop-opacity="0"></stop>
+                        <stop offset="1" stop-color="#FDBB4E" stop-opacity="0.63"></stop>
+                    </linearGradient>
+                    <linearGradient id="paint1_linear_448_8887status" x1="13.182" y1="0.451259" x2="18.8653"
+                        y2="22.4209" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#FDBB4E" stop-opacity="0"></stop>
+                        <stop offset="1" stop-color="#FDBB4E" stop-opacity="0.63"></stop>
+                    </linearGradient>
+                    <radialGradient id="paint2_radial_448_8887status" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
+                        gradientTransform="translate(10.2132 9.86681) rotate(52.6712) scale(14.8278)">
+                        <stop offset="0.738765" stop-color="#9CB6DD" stop-opacity="0"></stop>
+                        <stop offset="0.89825" stop-color="#C6F1FF" stop-opacity="0.37"></stop>
+                        <stop offset="1" stop-color="#EFFBFF" stop-opacity="0.7"></stop>
+                    </radialGradient>
+                    <linearGradient id="paint3_linear_448_8887status" x1="20.3073" y1="17.4162" x2="8.6015" y2="6.81312"
+                        gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#FEFFD3" stop-opacity="0.63"></stop>
+                        <stop offset="0.218803" stop-color="#FAFD4E" stop-opacity="0"></stop>
+                        <stop offset="0.491108" stop-color="#FDFF8B" stop-opacity="0.56"></stop>
+                        <stop offset="0.733041" stop-color="#F7F990"></stop>
+                        <stop offset="1" stop-color="white" stop-opacity="0"></stop>
+                        <stop offset="1" stop-color="#FEFFB7" stop-opacity="0"></stop>
+                    </linearGradient>
+                    <linearGradient id="paint4_linear_448_8887status" x1="13.1816" y1="6.55811" x2="13.0119"
+                        y2="17.8398" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#FEFFB0"></stop>
+                        <stop offset="0.277442" stop-color="white" stop-opacity="0.51"></stop>
+                        <stop offset="1" stop-color="#FAFD4E" stop-opacity="0.15"></stop>
+                    </linearGradient>
+                    <linearGradient id="paint5_linear_448_8887status" x1="12.635" y1="10.8612" x2="12.551" y2="14.8707"
+                        gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#FAFD4E" stop-opacity="0"></stop>
+                        <stop offset="0.731853" stop-color="#FAFD4E" stop-opacity="0.46"></stop>
+                    </linearGradient>
+                    <linearGradient id="paint6_linear_448_8887status" x1="11.5105" y1="8.61842" x2="13.7636"
+                        y2="10.7449" gradientUnits="userSpaceOnUse">
+                        <stop offset="0.223958" stop-color="#FAFD4E" stop-opacity="0.35"></stop>
+                        <stop offset="1" stop-color="#FAFD4E" stop-opacity="0"></stop>
+                    </linearGradient>
+                </defs>
+            </svg> CaveMines
+        </p>
+        <svg width="164" height="75" viewBox="0 0 164 75" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g clip-path="url(#clip0_1_4)">
+                <path
+                    d="M30.0467 30.1774C30.873 26.2059 29.381 23.3593 26.7184 21.4998C24.2854 19.8699 21.2096 19.6403 17.9502 21.2473L4.40763 27.3538C1.01051 28.8919 -0.458512 32.8634 1.01051 36.1921C2.5484 39.5897 6.45049 41.0589 9.84761 39.5897L11.638 38.7632L8.72289 54.6034C7.89657 59.3783 10.9953 63.281 15.2187 64.1074C19.6947 64.9339 24.0558 61.9954 24.7903 57.5189L30.0467 30.1774Z"
+                    fill="url(#paint0_linear_1_4)" />
+                <path
+                    d="M153.238 20.329C145.778 19.2501 138.25 23.6118 135.38 29.7642L135.862 27.0783C137.079 21.6376 134.807 20.1913 130.927 20.1913H125.901C121.126 20.1913 120.047 22.7854 119.474 25.7927L113.62 58.2535C113.138 60.4573 113.46 64.2681 117.752 64.2681H124.73C128.862 64.2681 129.665 61.0312 130.239 57.9321L133.062 42.3445C133.728 38.7862 134.279 37.0645 135.495 35.7559C137.354 33.6439 141.096 32.6797 143.69 34.7917C145.227 36.0773 145.801 38.2812 145.388 41.3803L142.565 58.2535C141.945 61.9954 143.529 64.2681 146.628 64.2681H153.605C157.576 64.2681 158.38 61.1919 158.954 57.9321L163.039 36.789C164.944 29.1673 162.259 21.6376 153.238 20.329Z"
+                    fill="url(#paint1_linear_1_4)" />
+                <path
+                    d="M108.502 15.9673C112.939 15.9673 116.536 12.4008 116.536 8.00129C116.536 3.6018 112.939 0.0353165 108.502 0.0353165C104.065 0.0353165 100.468 3.6018 100.468 8.00129C100.468 12.4008 104.065 15.9673 108.502 15.9673Z"
+                    fill="url(#paint2_linear_1_4)" />
+                <path
+                    d="M109.007 57.8862C108.433 61.2838 107.469 64.2222 103.498 64.2222H96.4512C93.0541 64.2222 91.8146 61.697 92.4802 58.3683L98.2645 25.7468C98.8384 22.2574 100.376 20.1454 104.692 20.1454H110.04C114.584 20.1454 115.709 22.3492 114.745 27.0324L109.007 57.8862Z"
+                    fill="url(#paint3_linear_1_4)" />
+                <path
+                    d="M31.4698 20.1454C33.2602 22.2574 35.3719 24.8515 34.2931 31.1875L31.5387 46.0635L32.0207 58.001C32.1125 62.3168 34.2242 64.1763 37.782 64.1763H46.8716C49.6949 64.1763 50.9344 61.9725 52.0591 59.2406L58.9452 42.2756L59.6797 58.506C59.7715 62.0643 61.5389 64.2681 64.8672 64.2681H75.1733C78.0884 64.2681 79.3049 62.4775 80.6133 59.3324L93.8345 26.8717C95.2806 23.543 94.4083 20.2142 90.8276 20.2142H84.2399C81.8069 20.2142 80.1083 21.0407 79.1213 23.3823L70.1924 45.0993L69.3661 25.7009C69.2054 21.5687 67.2543 20.1913 64.8901 20.1913H58.1647C55.4792 20.1913 53.9413 21.2473 53.1379 23.2675L44.209 45.1911L43.3827 25.2188C43.2909 21.4769 42.0055 20.1913 38.9986 20.1913H33.2602H31.4698V20.1454Z"
+                    fill="url(#paint4_linear_1_4)" />
+            </g>
+            <defs>
+                <linearGradient id="paint0_linear_1_4" x1="15.3517" y1="70.3176" x2="15.3517" y2="19.1202"
+                    gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#0167CA" />
+                    <stop offset="1" stop-color="#38A8FA" />
+                </linearGradient>
+                <linearGradient id="paint1_linear_1_4" x1="138.558" y1="65.3916" x2="138.558" y2="19.053"
+                    gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#C8C7C7" />
+                    <stop offset="0.0762789" stop-color="#D6D5D5" />
+                    <stop offset="0.216" stop-color="#E8E8E8" />
+                    <stop offset="0.3802" stop-color="#F5F5F5" />
+                    <stop offset="0.5898" stop-color="#FDFDFD" />
+                    <stop offset="1" stop-color="white" />
+                </linearGradient>
+                <linearGradient id="paint2_linear_1_4" x1="108.504" y1="20.0223" x2="108.504" y2="-2.73076"
+                    gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#0167CA" />
+                    <stop offset="1" stop-color="#38A8FA" />
+                </linearGradient>
+                <linearGradient id="paint3_linear_1_4" x1="63.0184" y1="65.3891" x2="63.0184" y2="19.151"
+                    gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#C8C7C7" />
+                    <stop offset="0.0762789" stop-color="#D6D5D5" />
+                    <stop offset="0.216" stop-color="#E8E8E8" />
+                    <stop offset="0.3802" stop-color="#F5F5F5" />
+                    <stop offset="0.5898" stop-color="#FDFDFD" />
+                    <stop offset="1" stop-color="white" />
+                </linearGradient>
+                <linearGradient id="paint4_linear_1_4" x1="63.0184" y1="65.3891" x2="63.0184" y2="19.151"
+                    gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#C8C7C7" />
+                    <stop offset="0.0762789" stop-color="#D6D5D5" />
+                    <stop offset="0.216" stop-color="#E8E8E8" />
+                    <stop offset="0.3802" stop-color="#F5F5F5" />
+                    <stop offset="0.5898" stop-color="#FDFDFD" />
+                    <stop offset="1" stop-color="white" />
+                </linearGradient>
+                <clipPath id="clip0_1_4">
+                    <rect width="164" height="75" fill="white" />
+                </clipPath>
+            </defs>
+        </svg>
+        <div class="spinner"></div>
+
+
     </div>
 
-    <audio id="sound-effect" src="1.mp3"></audio> <!-- Звуковой эффект для воспроизведения -->
-    <audio id="tap-sound" src="tap.mp3"></audio>
-    <audio id="slider-sound" src="slider.mp3"></audio>
-    <script src="script.js"></script>
+</div>
+
+<div id="resetPopup" class="popup hidden">
+    <div class="popup-content">
+        <p id="popup-content"></p>
+        <div class="popup-buttons">
+            <button id="confirmReset"></button>
+            <button id="cancelReset"></button>
+        </div>
+    </div>
+</div>
+
+<div class="bot_name">
+    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="35" height="35" viewBox="0 0 48 48">
+        <path fill="#29b6f6" d="M24,4C13,4,4,13,4,24s9,20,20,20s20-9,20-20S35,4,24,4z"></path>
+        <path fill="#fff"
+            d="M34,15l-3.7,19.1c0,0-0.2,0.9-1.2,0.9c-0.6,0-0.9-0.3-0.9-0.3L20,28l-4-2l-5.1-1.4c0,0-0.9-0.3-0.9-1	c0-0.6,0.9-0.9,0.9-0.9l21.3-8.5c0,0,0.7-0.2,1.1-0.2c0.3,0,0.6,0.1,0.6,0.5C34,14.8,34,15,34,15z">
+        </path>
+        <path fill="#b0bec5" d="M23,30.5l-3.4,3.4c0,0-0.1,0.1-0.3,0.1c-0.1,0-0.1,0-0.2,0l1-6L23,30.5z"></path>
+        <path fill="#cfd8dc"
+            d="M29.9,18.2c-0.2-0.2-0.5-0.3-0.7-0.1L16,26c0,0,2.1,5.9,2.4,6.9c0.3,1,0.6,1,0.6,1l1-6l9.8-9.1	C30,18.7,30.1,18.4,29.9,18.2z">
+        </path>
+    </svg>
+    <span id="botName" style="text-transform: uppercase;"></span>
+</div>
+
+<div class="flex justify-center align-middle">
+
+    <div class="cells-board-wrapper">
+        <div class="cells-board">
+            <button id="cellButton" type="button" class="cell"><svg xmlns="http://www.w3.org/2000/svg" width="56"
+                    height="56" fill="none" viewBox="0 0 54 54">
+                    <defs>
+                        <radialGradient id="Gradient-2_c_2_r0" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse"
+                            gradientTransform="matrix(28.6228 -7.61449 6.96925 26.1973 5.358 50.625)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <radialGradient id="Gradient-3_c_2_r0" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse"
+                            gradientTransform="matrix(-26.8297 -12.5463 11.4831 -24.5562 19.703 45.611)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <linearGradient id="Gradient-0_c_2_r0" x1="58.152" y1="24.257" x2="-3.614" y2="28.984"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#d8fffc" stop-opacity="0.63"></stop>
+                            <stop offset="0.219" stop-color="#a0fff7" stop-opacity="0"></stop>
+                            <stop offset="0.491" stop-color="#8dfff6" stop-opacity="0.56"></stop>
+                            <stop offset="0.733" stop-color="#9af8f0"></stop>
+                            <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+                            <stop offset="1" stop-color="#bafff9" stop-opacity="0"></stop>
+                        </linearGradient>
+                        <linearGradient id="Gradient-1_c_2_r0" x1="24" y1="0" x2="24" y2="48"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#37b0ce"></stop>
+                            <stop offset="1" stop-color="#01586b"></stop>
+                        </linearGradient>
+                        <clipPath id="clip0_366_7284_c_2_r">
+                            <rect width="56" height="56" rx="7.593" fill="#fff"></rect>
+                        </clipPath>
+                    </defs>
+                    <style>
+                        @keyframes a0_t_c_2_r {
+                            0% {
+                                transform: translate(28px, 28px) scale(0, 0) translate(-28px, -28px);
+                                animation-timing-function: cubic-bezier(0, 0, .58, 1)
+                            }
+
+                            to {
+                                transform: translate(28px, 28px) scale(1, 1) translate(-28px, -28px)
+                            }
+                        }
+
+                        @keyframes a1_o_c_2_r {
+                            0% {
+                                opacity: .6
+                            }
+
+                            to {
+                                opacity: 0
+                            }
+                        }
+                    </style>
+                    <g clip-path="url(#clip0_366_7284_c_2_r)" transform="matrix(0 0 0 0 28 28)"
+                        style="animation: 0.25s linear both a0_t_c_2_r;">
+                        <rect opacity="0.7" width="56" height="56" rx="12" fill="#151C2E"></rect>
+                        <rect opacity="0.6" width="52" height="52" rx="10" fill="url(#Gradient-0_c_2_r0)"
+                            transform="translate(2 2)"></rect>
+                        <rect width="48" height="48" rx="8" fill="url(#Gradient-1_c_2_r0)" transform="translate(4 4)">
+                        </rect>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M14.834 60.127c3.731 1.672 7.732.204 11.798-.231 4.245-.454 9.628 1.157 12.1-2.325 2.466-3.477-1.482-7.917-1.818-12.166-.375-4.74 2.845-10.093-.23-13.719-3.261-3.844-9.295-4.521-14.177-3.264-4.482 1.155-6.48 5.88-9.52 9.37-3.412 3.912-9.48 6.762-9.052 11.935.43 5.202 6.134 8.266 10.899 10.4Z"
+                            fill="url(#Gradient-2_c_2_r0)"></path>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M8.7 53.292c-3.968.987-7.647-1.164-11.573-2.31-4.098-1.196-9.681-.56-11.498-4.423-1.815-3.857 2.854-7.531 3.935-11.655 1.205-4.599-1.02-10.436 2.648-13.462 3.888-3.208 9.947-2.81 14.53-.711 4.208 1.928 5.34 6.931 7.718 10.902 2.667 4.453 8.137 8.33 6.803 13.346-1.342 5.045-7.497 7.053-12.563 8.313Z"
+                            fill="url(#Gradient-3_c_2_r0)"></path>
+                        <rect opacity="0.6" width="56" height="56" rx="12" fill="#151C2E"
+                            style="animation: 0.25s linear both a1_o_c_2_r;"></rect>
+                    </g>
+                </svg></button><button id="cellButton" type="button" class="cell"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none" viewBox="0 0 54 54">
+                    <defs>
+                        <radialGradient id="Gradient-2_c_1_r1" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse" gradientTransform="matrix(-17.6 -22.9 21 -16.1 36.6 48.7)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <radialGradient id="Gradient-3_c_1_r1" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse" gradientTransform="matrix(18.6 -22.1 20.3 17 24.3 38.3)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <linearGradient id="Gradient-0_c_1_r1" x1="52" y1="52" x2="-2.3" y2="1"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#d8fffc" stop-opacity="0.63"></stop>
+                            <stop offset="0.2" stop-color="#a0fff7" stop-opacity="0"></stop>
+                            <stop offset="0.5" stop-color="#8dfff6" stop-opacity="0.56"></stop>
+                            <stop offset="0.7" stop-color="#9af8f0"></stop>
+                            <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+                            <stop offset="1" stop-color="#bafff9" stop-opacity="0"></stop>
+                        </linearGradient>
+                        <linearGradient id="Gradient-1_c_1_r1" x1="24" y1="0" x2="24" y2="48"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#37b0ce"></stop>
+                            <stop offset="1" stop-color="#01586b"></stop>
+                        </linearGradient>
+                        <clipPath id="ClipPath-1_c_1_r">
+                            <rect width="56" height="56" rx="8" fill="#fff"></rect>
+                        </clipPath>
+                    </defs>
+                    <style>
+                        @keyframes a0_t_c_1_r {
+                            0% {
+                                transform: translate(28px, 28px) scale(0, 0) translate(-28px, -28px);
+                                animation-timing-function: cubic-bezier(0, 0, .6, 1)
+                            }
+
+                            to {
+                                transform: translate(28px, 28px) scale(1, 1) translate(-28px, -28px)
+                            }
+                        }
+
+                        @keyframes a1_o_c_1_r {
+                            0% {
+                                opacity: .6
+                            }
+
+                            to {
+                                opacity: 0
+                            }
+                        }
+                    </style>
+                    <g clip-path="url(#ClipPath-1_c_1_r)" transform="matrix(0 0 0 0 28 28)"
+                        style="animation: 0.25s linear both a0_t_c_1_r;">
+                        <rect opacity="0.7" width="56" height="56" rx="8" fill="#151c2e"></rect>
+                        <path opacity="0.2" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M31.3 73.8c.2-5.9 4.5-10.1 7.6-15.1 3.3-5.2 4.6-13.1 10.6-14.1s9.3 6.8 14.6 9.9c5.8 3.5 14.8 2.7 17.5 8.9 2.9 6.6 0 14.8-4.6 20.3-4.3 5.1-11.7 4.7-18.1 6.4-7.1 2-14.6 8-21 4.3-6.5-3.8-6.8-13.1-6.6-20.6ZM23.8 44.2c3.6 3.3 7.2 8 6.2 12.8-.9 4.8-7 5.7-10.6 9-3.8 3.5-5.4 11.3-10.6 10.7-5.3-.6-4.5-9-8.1-13-3.7-4.1-11.5-4.6-12.4-10.1-1-5.7 3.4-11.5 8.4-14.4 4.5-2.6 9.9.2 15 1.1 4.3.8 8.8.9 12.1 3.9ZM51.3-5.2c3.6 3.4 7.2 8 6.3 12.9-1 4.7-7.1 5.7-10.6 8.9-3.9 3.6-5.5 11.4-10.7 10.7-5.3-.6-4.5-9-8-12.9-3.7-4.2-11.6-4.6-12.5-10.1-1-5.7 3.4-11.6 8.4-14.4 4.6-2.6 9.9.1 15 1.1 4.3.8 8.8.9 12.1 3.8Z"
+                            fill="#1c2130"></path>
+                        <rect opacity="0.6" width="52" height="52" rx="6" fill="url(#Gradient-0_c_1_r1)"
+                            transform="translate(2 2)"></rect>
+                        <rect width="48" height="48" rx="4" fill="url(#Gradient-1_c_1_r1)" transform="translate(4 4)">
+                        </rect>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M23.6 50.4c-3.9-.9-6.1-4.4-9-7.2-3-2.9-8.1-4.8-8-9 .2-4.1 5.9-5.2 8.7-8.3 3.1-3.5 3.8-9.5 8.3-10.5 4.8-1 9.9 2 12.9 5.9 2.8 3.6 1.6 8.4 1.8 12.9.4 5.1 3.4 10.9 0 14.6-3.5 3.8-9.7 2.8-14.7 1.6Z"
+                            fill="url(#Gradient-2_c_1_r1)"></path>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M19.9 26c.1-4 3-6.9 5.1-10.3 2.1-3.6 3-9 7.1-9.7 4.1-.8 6.3 4.6 10 6.6 4 2.3 10.1 1.7 12 5.9 2 4.5.1 10.1-3 13.9-2.9 3.5-7.9 3.3-12.3 4.5-4.8 1.4-9.9 5.6-14.3 3.1-4.4-2.6-4.7-8.9-4.6-14Z"
+                            fill="url(#Gradient-3_c_1_r1)"></path>
+                        <rect opacity="0.6" width="56" height="56" rx="8" fill="#151c2e"
+                            style="animation: 0.25s linear both a1_o_c_1_r;"></rect>
+                    </g>
+                </svg></button><button id="cellButton" type="button" class="cell"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none" viewBox="0 0 54 54">
+                    <defs>
+                        <radialGradient id="Gradient-2_c_2_r2" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse"
+                            gradientTransform="matrix(28.6228 -7.61449 6.96925 26.1973 5.358 50.625)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <radialGradient id="Gradient-3_c_2_r2" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse"
+                            gradientTransform="matrix(-26.8297 -12.5463 11.4831 -24.5562 19.703 45.611)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <linearGradient id="Gradient-0_c_2_r2" x1="58.152" y1="24.257" x2="-3.614" y2="28.984"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#d8fffc" stop-opacity="0.63"></stop>
+                            <stop offset="0.219" stop-color="#a0fff7" stop-opacity="0"></stop>
+                            <stop offset="0.491" stop-color="#8dfff6" stop-opacity="0.56"></stop>
+                            <stop offset="0.733" stop-color="#9af8f0"></stop>
+                            <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+                            <stop offset="1" stop-color="#bafff9" stop-opacity="0"></stop>
+                        </linearGradient>
+                        <linearGradient id="Gradient-1_c_2_r2" x1="24" y1="0" x2="24" y2="48"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#37b0ce"></stop>
+                            <stop offset="1" stop-color="#01586b"></stop>
+                        </linearGradient>
+                        <clipPath id="clip0_366_7284_c_2_r">
+                            <rect width="56" height="56" rx="7.593" fill="#fff"></rect>
+                        </clipPath>
+                    </defs>
+                    <style>
+                        @keyframes a0_t_c_2_r {
+                            0% {
+                                transform: translate(28px, 28px) scale(0, 0) translate(-28px, -28px);
+                                animation-timing-function: cubic-bezier(0, 0, .58, 1)
+                            }
+
+                            to {
+                                transform: translate(28px, 28px) scale(1, 1) translate(-28px, -28px)
+                            }
+                        }
+
+                        @keyframes a1_o_c_2_r {
+                            0% {
+                                opacity: .6
+                            }
+
+                            to {
+                                opacity: 0
+                            }
+                        }
+                    </style>
+                    <g clip-path="url(#clip0_366_7284_c_2_r)" transform="matrix(0 0 0 0 28 28)"
+                        style="animation: 0.25s linear both a0_t_c_2_r;">
+                        <rect opacity="0.7" width="56" height="56" rx="12" fill="#151C2E"></rect>
+                        <rect opacity="0.6" width="52" height="52" rx="10" fill="url(#Gradient-0_c_2_r2)"
+                            transform="translate(2 2)"></rect>
+                        <rect width="48" height="48" rx="8" fill="url(#Gradient-1_c_2_r2)" transform="translate(4 4)">
+                        </rect>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M14.834 60.127c3.731 1.672 7.732.204 11.798-.231 4.245-.454 9.628 1.157 12.1-2.325 2.466-3.477-1.482-7.917-1.818-12.166-.375-4.74 2.845-10.093-.23-13.719-3.261-3.844-9.295-4.521-14.177-3.264-4.482 1.155-6.48 5.88-9.52 9.37-3.412 3.912-9.48 6.762-9.052 11.935.43 5.202 6.134 8.266 10.899 10.4Z"
+                            fill="url(#Gradient-2_c_2_r2)"></path>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M8.7 53.292c-3.968.987-7.647-1.164-11.573-2.31-4.098-1.196-9.681-.56-11.498-4.423-1.815-3.857 2.854-7.531 3.935-11.655 1.205-4.599-1.02-10.436 2.648-13.462 3.888-3.208 9.947-2.81 14.53-.711 4.208 1.928 5.34 6.931 7.718 10.902 2.667 4.453 8.137 8.33 6.803 13.346-1.342 5.045-7.497 7.053-12.563 8.313Z"
+                            fill="url(#Gradient-3_c_2_r2)"></path>
+                        <rect opacity="0.6" width="56" height="56" rx="12" fill="#151C2E"
+                            style="animation: 0.25s linear both a1_o_c_2_r;"></rect>
+                    </g>
+                </svg></button><button id="cellButton" type="button" class="cell"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none" viewBox="0 0 54 54">
+                    <defs>
+                        <radialGradient id="Gradient-2_c_1_r3" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse" gradientTransform="matrix(-17.6 -22.9 21 -16.1 36.6 48.7)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <radialGradient id="Gradient-3_c_1_r3" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse" gradientTransform="matrix(18.6 -22.1 20.3 17 24.3 38.3)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <linearGradient id="Gradient-0_c_1_r3" x1="52" y1="52" x2="-2.3" y2="1"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#d8fffc" stop-opacity="0.63"></stop>
+                            <stop offset="0.2" stop-color="#a0fff7" stop-opacity="0"></stop>
+                            <stop offset="0.5" stop-color="#8dfff6" stop-opacity="0.56"></stop>
+                            <stop offset="0.7" stop-color="#9af8f0"></stop>
+                            <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+                            <stop offset="1" stop-color="#bafff9" stop-opacity="0"></stop>
+                        </linearGradient>
+                        <linearGradient id="Gradient-1_c_1_r3" x1="24" y1="0" x2="24" y2="48"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#37b0ce"></stop>
+                            <stop offset="1" stop-color="#01586b"></stop>
+                        </linearGradient>
+                        <clipPath id="ClipPath-1_c_1_r">
+                            <rect width="56" height="56" rx="8" fill="#fff"></rect>
+                        </clipPath>
+                    </defs>
+                    <style>
+                        @keyframes a0_t_c_1_r {
+                            0% {
+                                transform: translate(28px, 28px) scale(0, 0) translate(-28px, -28px);
+                                animation-timing-function: cubic-bezier(0, 0, .6, 1)
+                            }
+
+                            to {
+                                transform: translate(28px, 28px) scale(1, 1) translate(-28px, -28px)
+                            }
+                        }
+
+                        @keyframes a1_o_c_1_r {
+                            0% {
+                                opacity: .6
+                            }
+
+                            to {
+                                opacity: 0
+                            }
+                        }
+                    </style>
+                    <g clip-path="url(#ClipPath-1_c_1_r)" transform="matrix(0 0 0 0 28 28)"
+                        style="animation: 0.25s linear both a0_t_c_1_r;">
+                        <rect opacity="0.7" width="56" height="56" rx="8" fill="#151c2e"></rect>
+                        <path opacity="0.2" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M31.3 73.8c.2-5.9 4.5-10.1 7.6-15.1 3.3-5.2 4.6-13.1 10.6-14.1s9.3 6.8 14.6 9.9c5.8 3.5 14.8 2.7 17.5 8.9 2.9 6.6 0 14.8-4.6 20.3-4.3 5.1-11.7 4.7-18.1 6.4-7.1 2-14.6 8-21 4.3-6.5-3.8-6.8-13.1-6.6-20.6ZM23.8 44.2c3.6 3.3 7.2 8 6.2 12.8-.9 4.8-7 5.7-10.6 9-3.8 3.5-5.4 11.3-10.6 10.7-5.3-.6-4.5-9-8.1-13-3.7-4.1-11.5-4.6-12.4-10.1-1-5.7 3.4-11.5 8.4-14.4 4.5-2.6 9.9.2 15 1.1 4.3.8 8.8.9 12.1 3.9ZM51.3-5.2c3.6 3.4 7.2 8 6.3 12.9-1 4.7-7.1 5.7-10.6 8.9-3.9 3.6-5.5 11.4-10.7 10.7-5.3-.6-4.5-9-8-12.9-3.7-4.2-11.6-4.6-12.5-10.1-1-5.7 3.4-11.6 8.4-14.4 4.6-2.6 9.9.1 15 1.1 4.3.8 8.8.9 12.1 3.8Z"
+                            fill="#1c2130"></path>
+                        <rect opacity="0.6" width="52" height="52" rx="6" fill="url(#Gradient-0_c_1_r3)"
+                            transform="translate(2 2)"></rect>
+                        <rect width="48" height="48" rx="4" fill="url(#Gradient-1_c_1_r3)" transform="translate(4 4)">
+                        </rect>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M23.6 50.4c-3.9-.9-6.1-4.4-9-7.2-3-2.9-8.1-4.8-8-9 .2-4.1 5.9-5.2 8.7-8.3 3.1-3.5 3.8-9.5 8.3-10.5 4.8-1 9.9 2 12.9 5.9 2.8 3.6 1.6 8.4 1.8 12.9.4 5.1 3.4 10.9 0 14.6-3.5 3.8-9.7 2.8-14.7 1.6Z"
+                            fill="url(#Gradient-2_c_1_r3)"></path>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M19.9 26c.1-4 3-6.9 5.1-10.3 2.1-3.6 3-9 7.1-9.7 4.1-.8 6.3 4.6 10 6.6 4 2.3 10.1 1.7 12 5.9 2 4.5.1 10.1-3 13.9-2.9 3.5-7.9 3.3-12.3 4.5-4.8 1.4-9.9 5.6-14.3 3.1-4.4-2.6-4.7-8.9-4.6-14Z"
+                            fill="url(#Gradient-3_c_1_r3)"></path>
+                        <rect opacity="0.6" width="56" height="56" rx="8" fill="#151c2e"
+                            style="animation: 0.25s linear both a1_o_c_1_r;"></rect>
+                    </g>
+                </svg></button><button id="cellButton" type="button" class="cell"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none" viewBox="0 0 54 54">
+                    <defs>
+                        <radialGradient id="Gradient-2_c_2_r4" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse"
+                            gradientTransform="matrix(28.6228 -7.61449 6.96925 26.1973 5.358 50.625)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <radialGradient id="Gradient-3_c_2_r4" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse"
+                            gradientTransform="matrix(-26.8297 -12.5463 11.4831 -24.5562 19.703 45.611)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <linearGradient id="Gradient-0_c_2_r4" x1="58.152" y1="24.257" x2="-3.614" y2="28.984"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#d8fffc" stop-opacity="0.63"></stop>
+                            <stop offset="0.219" stop-color="#a0fff7" stop-opacity="0"></stop>
+                            <stop offset="0.491" stop-color="#8dfff6" stop-opacity="0.56"></stop>
+                            <stop offset="0.733" stop-color="#9af8f0"></stop>
+                            <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+                            <stop offset="1" stop-color="#bafff9" stop-opacity="0"></stop>
+                        </linearGradient>
+                        <linearGradient id="Gradient-1_c_2_r4" x1="24" y1="0" x2="24" y2="48"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#37b0ce"></stop>
+                            <stop offset="1" stop-color="#01586b"></stop>
+                        </linearGradient>
+                        <clipPath id="clip0_366_7284_c_2_r">
+                            <rect width="56" height="56" rx="7.593" fill="#fff"></rect>
+                        </clipPath>
+                    </defs>
+                    <style>
+                        @keyframes a0_t_c_2_r {
+                            0% {
+                                transform: translate(28px, 28px) scale(0, 0) translate(-28px, -28px);
+                                animation-timing-function: cubic-bezier(0, 0, .58, 1)
+                            }
+
+                            to {
+                                transform: translate(28px, 28px) scale(1, 1) translate(-28px, -28px)
+                            }
+                        }
+
+                        @keyframes a1_o_c_2_r {
+                            0% {
+                                opacity: .6
+                            }
+
+                            to {
+                                opacity: 0
+                            }
+                        }
+                    </style>
+                    <g clip-path="url(#clip0_366_7284_c_2_r)" transform="matrix(0 0 0 0 28 28)"
+                        style="animation: 0.25s linear both a0_t_c_2_r;">
+                        <rect opacity="0.7" width="56" height="56" rx="12" fill="#151C2E"></rect>
+                        <rect opacity="0.6" width="52" height="52" rx="10" fill="url(#Gradient-0_c_2_r4)"
+                            transform="translate(2 2)"></rect>
+                        <rect width="48" height="48" rx="8" fill="url(#Gradient-1_c_2_r4)" transform="translate(4 4)">
+                        </rect>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M14.834 60.127c3.731 1.672 7.732.204 11.798-.231 4.245-.454 9.628 1.157 12.1-2.325 2.466-3.477-1.482-7.917-1.818-12.166-.375-4.74 2.845-10.093-.23-13.719-3.261-3.844-9.295-4.521-14.177-3.264-4.482 1.155-6.48 5.88-9.52 9.37-3.412 3.912-9.48 6.762-9.052 11.935.43 5.202 6.134 8.266 10.899 10.4Z"
+                            fill="url(#Gradient-2_c_2_r4)"></path>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M8.7 53.292c-3.968.987-7.647-1.164-11.573-2.31-4.098-1.196-9.681-.56-11.498-4.423-1.815-3.857 2.854-7.531 3.935-11.655 1.205-4.599-1.02-10.436 2.648-13.462 3.888-3.208 9.947-2.81 14.53-.711 4.208 1.928 5.34 6.931 7.718 10.902 2.667 4.453 8.137 8.33 6.803 13.346-1.342 5.045-7.497 7.053-12.563 8.313Z"
+                            fill="url(#Gradient-3_c_2_r4)"></path>
+                        <rect opacity="0.6" width="56" height="56" rx="12" fill="#151C2E"
+                            style="animation: 0.25s linear both a1_o_c_2_r;"></rect>
+                    </g>
+                </svg></button><button id="cellButton" type="button" class="cell"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none" viewBox="0 0 54 54">
+                    <defs>
+                        <radialGradient id="Gradient-2_c_1_r5" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse" gradientTransform="matrix(-17.6 -22.9 21 -16.1 36.6 48.7)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <radialGradient id="Gradient-3_c_1_r5" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse" gradientTransform="matrix(18.6 -22.1 20.3 17 24.3 38.3)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <linearGradient id="Gradient-0_c_1_r5" x1="52" y1="52" x2="-2.3" y2="1"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#d8fffc" stop-opacity="0.63"></stop>
+                            <stop offset="0.2" stop-color="#a0fff7" stop-opacity="0"></stop>
+                            <stop offset="0.5" stop-color="#8dfff6" stop-opacity="0.56"></stop>
+                            <stop offset="0.7" stop-color="#9af8f0"></stop>
+                            <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+                            <stop offset="1" stop-color="#bafff9" stop-opacity="0"></stop>
+                        </linearGradient>
+                        <linearGradient id="Gradient-1_c_1_r5" x1="24" y1="0" x2="24" y2="48"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#37b0ce"></stop>
+                            <stop offset="1" stop-color="#01586b"></stop>
+                        </linearGradient>
+                        <clipPath id="ClipPath-1_c_1_r">
+                            <rect width="56" height="56" rx="8" fill="#fff"></rect>
+                        </clipPath>
+                    </defs>
+                    <style>
+                        @keyframes a0_t_c_1_r {
+                            0% {
+                                transform: translate(28px, 28px) scale(0, 0) translate(-28px, -28px);
+                                animation-timing-function: cubic-bezier(0, 0, .6, 1)
+                            }
+
+                            to {
+                                transform: translate(28px, 28px) scale(1, 1) translate(-28px, -28px)
+                            }
+                        }
+
+                        @keyframes a1_o_c_1_r {
+                            0% {
+                                opacity: .6
+                            }
+
+                            to {
+                                opacity: 0
+                            }
+                        }
+                    </style>
+                    <g clip-path="url(#ClipPath-1_c_1_r)" transform="matrix(0 0 0 0 28 28)"
+                        style="animation: 0.25s linear both a0_t_c_1_r;">
+                        <rect opacity="0.7" width="56" height="56" rx="8" fill="#151c2e"></rect>
+                        <path opacity="0.2" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M31.3 73.8c.2-5.9 4.5-10.1 7.6-15.1 3.3-5.2 4.6-13.1 10.6-14.1s9.3 6.8 14.6 9.9c5.8 3.5 14.8 2.7 17.5 8.9 2.9 6.6 0 14.8-4.6 20.3-4.3 5.1-11.7 4.7-18.1 6.4-7.1 2-14.6 8-21 4.3-6.5-3.8-6.8-13.1-6.6-20.6ZM23.8 44.2c3.6 3.3 7.2 8 6.2 12.8-.9 4.8-7 5.7-10.6 9-3.8 3.5-5.4 11.3-10.6 10.7-5.3-.6-4.5-9-8.1-13-3.7-4.1-11.5-4.6-12.4-10.1-1-5.7 3.4-11.5 8.4-14.4 4.5-2.6 9.9.2 15 1.1 4.3.8 8.8.9 12.1 3.9ZM51.3-5.2c3.6 3.4 7.2 8 6.3 12.9-1 4.7-7.1 5.7-10.6 8.9-3.9 3.6-5.5 11.4-10.7 10.7-5.3-.6-4.5-9-8-12.9-3.7-4.2-11.6-4.6-12.5-10.1-1-5.7 3.4-11.6 8.4-14.4 4.6-2.6 9.9.1 15 1.1 4.3.8 8.8.9 12.1 3.8Z"
+                            fill="#1c2130"></path>
+                        <rect opacity="0.6" width="52" height="52" rx="6" fill="url(#Gradient-0_c_1_r5)"
+                            transform="translate(2 2)"></rect>
+                        <rect width="48" height="48" rx="4" fill="url(#Gradient-1_c_1_r5)" transform="translate(4 4)">
+                        </rect>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M23.6 50.4c-3.9-.9-6.1-4.4-9-7.2-3-2.9-8.1-4.8-8-9 .2-4.1 5.9-5.2 8.7-8.3 3.1-3.5 3.8-9.5 8.3-10.5 4.8-1 9.9 2 12.9 5.9 2.8 3.6 1.6 8.4 1.8 12.9.4 5.1 3.4 10.9 0 14.6-3.5 3.8-9.7 2.8-14.7 1.6Z"
+                            fill="url(#Gradient-2_c_1_r5)"></path>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M19.9 26c.1-4 3-6.9 5.1-10.3 2.1-3.6 3-9 7.1-9.7 4.1-.8 6.3 4.6 10 6.6 4 2.3 10.1 1.7 12 5.9 2 4.5.1 10.1-3 13.9-2.9 3.5-7.9 3.3-12.3 4.5-4.8 1.4-9.9 5.6-14.3 3.1-4.4-2.6-4.7-8.9-4.6-14Z"
+                            fill="url(#Gradient-3_c_1_r5)"></path>
+                        <rect opacity="0.6" width="56" height="56" rx="8" fill="#151c2e"
+                            style="animation: 0.25s linear both a1_o_c_1_r;"></rect>
+                    </g>
+                </svg></button><button id="cellButton" type="button" class="cell"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none" viewBox="0 0 54 54">
+                    <defs>
+                        <radialGradient id="Gradient-2_c_2_r6" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse"
+                            gradientTransform="matrix(28.6228 -7.61449 6.96925 26.1973 5.358 50.625)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <radialGradient id="Gradient-3_c_2_r6" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse"
+                            gradientTransform="matrix(-26.8297 -12.5463 11.4831 -24.5562 19.703 45.611)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <linearGradient id="Gradient-0_c_2_r6" x1="58.152" y1="24.257" x2="-3.614" y2="28.984"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#d8fffc" stop-opacity="0.63"></stop>
+                            <stop offset="0.219" stop-color="#a0fff7" stop-opacity="0"></stop>
+                            <stop offset="0.491" stop-color="#8dfff6" stop-opacity="0.56"></stop>
+                            <stop offset="0.733" stop-color="#9af8f0"></stop>
+                            <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+                            <stop offset="1" stop-color="#bafff9" stop-opacity="0"></stop>
+                        </linearGradient>
+                        <linearGradient id="Gradient-1_c_2_r6" x1="24" y1="0" x2="24" y2="48"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#37b0ce"></stop>
+                            <stop offset="1" stop-color="#01586b"></stop>
+                        </linearGradient>
+                        <clipPath id="clip0_366_7284_c_2_r">
+                            <rect width="56" height="56" rx="7.593" fill="#fff"></rect>
+                        </clipPath>
+                    </defs>
+                    <style>
+                        @keyframes a0_t_c_2_r {
+                            0% {
+                                transform: translate(28px, 28px) scale(0, 0) translate(-28px, -28px);
+                                animation-timing-function: cubic-bezier(0, 0, .58, 1)
+                            }
+
+                            to {
+                                transform: translate(28px, 28px) scale(1, 1) translate(-28px, -28px)
+                            }
+                        }
+
+                        @keyframes a1_o_c_2_r {
+                            0% {
+                                opacity: .6
+                            }
+
+                            to {
+                                opacity: 0
+                            }
+                        }
+                    </style>
+                    <g clip-path="url(#clip0_366_7284_c_2_r)" transform="matrix(0 0 0 0 28 28)"
+                        style="animation: 0.25s linear both a0_t_c_2_r;">
+                        <rect opacity="0.7" width="56" height="56" rx="12" fill="#151C2E"></rect>
+                        <rect opacity="0.6" width="52" height="52" rx="10" fill="url(#Gradient-0_c_2_r6)"
+                            transform="translate(2 2)"></rect>
+                        <rect width="48" height="48" rx="8" fill="url(#Gradient-1_c_2_r6)" transform="translate(4 4)">
+                        </rect>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M14.834 60.127c3.731 1.672 7.732.204 11.798-.231 4.245-.454 9.628 1.157 12.1-2.325 2.466-3.477-1.482-7.917-1.818-12.166-.375-4.74 2.845-10.093-.23-13.719-3.261-3.844-9.295-4.521-14.177-3.264-4.482 1.155-6.48 5.88-9.52 9.37-3.412 3.912-9.48 6.762-9.052 11.935.43 5.202 6.134 8.266 10.899 10.4Z"
+                            fill="url(#Gradient-2_c_2_r6)"></path>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M8.7 53.292c-3.968.987-7.647-1.164-11.573-2.31-4.098-1.196-9.681-.56-11.498-4.423-1.815-3.857 2.854-7.531 3.935-11.655 1.205-4.599-1.02-10.436 2.648-13.462 3.888-3.208 9.947-2.81 14.53-.711 4.208 1.928 5.34 6.931 7.718 10.902 2.667 4.453 8.137 8.33 6.803 13.346-1.342 5.045-7.497 7.053-12.563 8.313Z"
+                            fill="url(#Gradient-3_c_2_r6)"></path>
+                        <rect opacity="0.6" width="56" height="56" rx="12" fill="#151C2E"
+                            style="animation: 0.25s linear both a1_o_c_2_r;"></rect>
+                    </g>
+                </svg></button><button id="cellButton" type="button" class="cell"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none" viewBox="0 0 54 54">
+                    <defs>
+                        <radialGradient id="Gradient-2_c_1_r7" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse" gradientTransform="matrix(-17.6 -22.9 21 -16.1 36.6 48.7)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <radialGradient id="Gradient-3_c_1_r7" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse" gradientTransform="matrix(18.6 -22.1 20.3 17 24.3 38.3)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <linearGradient id="Gradient-0_c_1_r7" x1="52" y1="52" x2="-2.3" y2="1"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#d8fffc" stop-opacity="0.63"></stop>
+                            <stop offset="0.2" stop-color="#a0fff7" stop-opacity="0"></stop>
+                            <stop offset="0.5" stop-color="#8dfff6" stop-opacity="0.56"></stop>
+                            <stop offset="0.7" stop-color="#9af8f0"></stop>
+                            <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+                            <stop offset="1" stop-color="#bafff9" stop-opacity="0"></stop>
+                        </linearGradient>
+                        <linearGradient id="Gradient-1_c_1_r7" x1="24" y1="0" x2="24" y2="48"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#37b0ce"></stop>
+                            <stop offset="1" stop-color="#01586b"></stop>
+                        </linearGradient>
+                        <clipPath id="ClipPath-1_c_1_r">
+                            <rect width="56" height="56" rx="8" fill="#fff"></rect>
+                        </clipPath>
+                    </defs>
+                    <style>
+                        @keyframes a0_t_c_1_r {
+                            0% {
+                                transform: translate(28px, 28px) scale(0, 0) translate(-28px, -28px);
+                                animation-timing-function: cubic-bezier(0, 0, .6, 1)
+                            }
+
+                            to {
+                                transform: translate(28px, 28px) scale(1, 1) translate(-28px, -28px)
+                            }
+                        }
+
+                        @keyframes a1_o_c_1_r {
+                            0% {
+                                opacity: .6
+                            }
+
+                            to {
+                                opacity: 0
+                            }
+                        }
+                    </style>
+                    <g clip-path="url(#ClipPath-1_c_1_r)" transform="matrix(0 0 0 0 28 28)"
+                        style="animation: 0.25s linear both a0_t_c_1_r;">
+                        <rect opacity="0.7" width="56" height="56" rx="8" fill="#151c2e"></rect>
+                        <path opacity="0.2" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M31.3 73.8c.2-5.9 4.5-10.1 7.6-15.1 3.3-5.2 4.6-13.1 10.6-14.1s9.3 6.8 14.6 9.9c5.8 3.5 14.8 2.7 17.5 8.9 2.9 6.6 0 14.8-4.6 20.3-4.3 5.1-11.7 4.7-18.1 6.4-7.1 2-14.6 8-21 4.3-6.5-3.8-6.8-13.1-6.6-20.6ZM23.8 44.2c3.6 3.3 7.2 8 6.2 12.8-.9 4.8-7 5.7-10.6 9-3.8 3.5-5.4 11.3-10.6 10.7-5.3-.6-4.5-9-8.1-13-3.7-4.1-11.5-4.6-12.4-10.1-1-5.7 3.4-11.5 8.4-14.4 4.5-2.6 9.9.2 15 1.1 4.3.8 8.8.9 12.1 3.9ZM51.3-5.2c3.6 3.4 7.2 8 6.3 12.9-1 4.7-7.1 5.7-10.6 8.9-3.9 3.6-5.5 11.4-10.7 10.7-5.3-.6-4.5-9-8-12.9-3.7-4.2-11.6-4.6-12.5-10.1-1-5.7 3.4-11.6 8.4-14.4 4.6-2.6 9.9.1 15 1.1 4.3.8 8.8.9 12.1 3.8Z"
+                            fill="#1c2130"></path>
+                        <rect opacity="0.6" width="52" height="52" rx="6" fill="url(#Gradient-0_c_1_r7)"
+                            transform="translate(2 2)"></rect>
+                        <rect width="48" height="48" rx="4" fill="url(#Gradient-1_c_1_r7)" transform="translate(4 4)">
+                        </rect>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M23.6 50.4c-3.9-.9-6.1-4.4-9-7.2-3-2.9-8.1-4.8-8-9 .2-4.1 5.9-5.2 8.7-8.3 3.1-3.5 3.8-9.5 8.3-10.5 4.8-1 9.9 2 12.9 5.9 2.8 3.6 1.6 8.4 1.8 12.9.4 5.1 3.4 10.9 0 14.6-3.5 3.8-9.7 2.8-14.7 1.6Z"
+                            fill="url(#Gradient-2_c_1_r7)"></path>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M19.9 26c.1-4 3-6.9 5.1-10.3 2.1-3.6 3-9 7.1-9.7 4.1-.8 6.3 4.6 10 6.6 4 2.3 10.1 1.7 12 5.9 2 4.5.1 10.1-3 13.9-2.9 3.5-7.9 3.3-12.3 4.5-4.8 1.4-9.9 5.6-14.3 3.1-4.4-2.6-4.7-8.9-4.6-14Z"
+                            fill="url(#Gradient-3_c_1_r7)"></path>
+                        <rect opacity="0.6" width="56" height="56" rx="8" fill="#151c2e"
+                            style="animation: 0.25s linear both a1_o_c_1_r;"></rect>
+                    </g>
+                </svg></button><button id="cellButton" type="button" class="cell"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none" viewBox="0 0 54 54">
+                    <defs>
+                        <radialGradient id="Gradient-2_c_2_r8" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse"
+                            gradientTransform="matrix(28.6228 -7.61449 6.96925 26.1973 5.358 50.625)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <radialGradient id="Gradient-3_c_2_r8" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse"
+                            gradientTransform="matrix(-26.8297 -12.5463 11.4831 -24.5562 19.703 45.611)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <linearGradient id="Gradient-0_c_2_r8" x1="58.152" y1="24.257" x2="-3.614" y2="28.984"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#d8fffc" stop-opacity="0.63"></stop>
+                            <stop offset="0.219" stop-color="#a0fff7" stop-opacity="0"></stop>
+                            <stop offset="0.491" stop-color="#8dfff6" stop-opacity="0.56"></stop>
+                            <stop offset="0.733" stop-color="#9af8f0"></stop>
+                            <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+                            <stop offset="1" stop-color="#bafff9" stop-opacity="0"></stop>
+                        </linearGradient>
+                        <linearGradient id="Gradient-1_c_2_r8" x1="24" y1="0" x2="24" y2="48"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#37b0ce"></stop>
+                            <stop offset="1" stop-color="#01586b"></stop>
+                        </linearGradient>
+                        <clipPath id="clip0_366_7284_c_2_r">
+                            <rect width="56" height="56" rx="7.593" fill="#fff"></rect>
+                        </clipPath>
+                    </defs>
+                    <style>
+                        @keyframes a0_t_c_2_r {
+                            0% {
+                                transform: translate(28px, 28px) scale(0, 0) translate(-28px, -28px);
+                                animation-timing-function: cubic-bezier(0, 0, .58, 1)
+                            }
+
+                            to {
+                                transform: translate(28px, 28px) scale(1, 1) translate(-28px, -28px)
+                            }
+                        }
+
+                        @keyframes a1_o_c_2_r {
+                            0% {
+                                opacity: .6
+                            }
+
+                            to {
+                                opacity: 0
+                            }
+                        }
+                    </style>
+                    <g clip-path="url(#clip0_366_7284_c_2_r)" transform="matrix(0 0 0 0 28 28)"
+                        style="animation: 0.25s linear both a0_t_c_2_r;">
+                        <rect opacity="0.7" width="56" height="56" rx="12" fill="#151C2E"></rect>
+                        <rect opacity="0.6" width="52" height="52" rx="10" fill="url(#Gradient-0_c_2_r8)"
+                            transform="translate(2 2)"></rect>
+                        <rect width="48" height="48" rx="8" fill="url(#Gradient-1_c_2_r8)" transform="translate(4 4)">
+                        </rect>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M14.834 60.127c3.731 1.672 7.732.204 11.798-.231 4.245-.454 9.628 1.157 12.1-2.325 2.466-3.477-1.482-7.917-1.818-12.166-.375-4.74 2.845-10.093-.23-13.719-3.261-3.844-9.295-4.521-14.177-3.264-4.482 1.155-6.48 5.88-9.52 9.37-3.412 3.912-9.48 6.762-9.052 11.935.43 5.202 6.134 8.266 10.899 10.4Z"
+                            fill="url(#Gradient-2_c_2_r8)"></path>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M8.7 53.292c-3.968.987-7.647-1.164-11.573-2.31-4.098-1.196-9.681-.56-11.498-4.423-1.815-3.857 2.854-7.531 3.935-11.655 1.205-4.599-1.02-10.436 2.648-13.462 3.888-3.208 9.947-2.81 14.53-.711 4.208 1.928 5.34 6.931 7.718 10.902 2.667 4.453 8.137 8.33 6.803 13.346-1.342 5.045-7.497 7.053-12.563 8.313Z"
+                            fill="url(#Gradient-3_c_2_r8)"></path>
+                        <rect opacity="0.6" width="56" height="56" rx="12" fill="#151C2E"
+                            style="animation: 0.25s linear both a1_o_c_2_r;"></rect>
+                    </g>
+                </svg></button><button id="cellButton" type="button" class="cell"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none" viewBox="0 0 54 54">
+                    <defs>
+                        <radialGradient id="Gradient-2_c_1_r9" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse" gradientTransform="matrix(-17.6 -22.9 21 -16.1 36.6 48.7)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <radialGradient id="Gradient-3_c_1_r9" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse" gradientTransform="matrix(18.6 -22.1 20.3 17 24.3 38.3)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <linearGradient id="Gradient-0_c_1_r9" x1="52" y1="52" x2="-2.3" y2="1"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#d8fffc" stop-opacity="0.63"></stop>
+                            <stop offset="0.2" stop-color="#a0fff7" stop-opacity="0"></stop>
+                            <stop offset="0.5" stop-color="#8dfff6" stop-opacity="0.56"></stop>
+                            <stop offset="0.7" stop-color="#9af8f0"></stop>
+                            <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+                            <stop offset="1" stop-color="#bafff9" stop-opacity="0"></stop>
+                        </linearGradient>
+                        <linearGradient id="Gradient-1_c_1_r9" x1="24" y1="0" x2="24" y2="48"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#37b0ce"></stop>
+                            <stop offset="1" stop-color="#01586b"></stop>
+                        </linearGradient>
+                        <clipPath id="ClipPath-1_c_1_r">
+                            <rect width="56" height="56" rx="8" fill="#fff"></rect>
+                        </clipPath>
+                    </defs>
+                    <style>
+                        @keyframes a0_t_c_1_r {
+                            0% {
+                                transform: translate(28px, 28px) scale(0, 0) translate(-28px, -28px);
+                                animation-timing-function: cubic-bezier(0, 0, .6, 1)
+                            }
+
+                            to {
+                                transform: translate(28px, 28px) scale(1, 1) translate(-28px, -28px)
+                            }
+                        }
+
+                        @keyframes a1_o_c_1_r {
+                            0% {
+                                opacity: .6
+                            }
+
+                            to {
+                                opacity: 0
+                            }
+                        }
+                    </style>
+                    <g clip-path="url(#ClipPath-1_c_1_r)" transform="matrix(0 0 0 0 28 28)"
+                        style="animation: 0.25s linear both a0_t_c_1_r;">
+                        <rect opacity="0.7" width="56" height="56" rx="8" fill="#151c2e"></rect>
+                        <path opacity="0.2" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M31.3 73.8c.2-5.9 4.5-10.1 7.6-15.1 3.3-5.2 4.6-13.1 10.6-14.1s9.3 6.8 14.6 9.9c5.8 3.5 14.8 2.7 17.5 8.9 2.9 6.6 0 14.8-4.6 20.3-4.3 5.1-11.7 4.7-18.1 6.4-7.1 2-14.6 8-21 4.3-6.5-3.8-6.8-13.1-6.6-20.6ZM23.8 44.2c3.6 3.3 7.2 8 6.2 12.8-.9 4.8-7 5.7-10.6 9-3.8 3.5-5.4 11.3-10.6 10.7-5.3-.6-4.5-9-8.1-13-3.7-4.1-11.5-4.6-12.4-10.1-1-5.7 3.4-11.5 8.4-14.4 4.5-2.6 9.9.2 15 1.1 4.3.8 8.8.9 12.1 3.9ZM51.3-5.2c3.6 3.4 7.2 8 6.3 12.9-1 4.7-7.1 5.7-10.6 8.9-3.9 3.6-5.5 11.4-10.7 10.7-5.3-.6-4.5-9-8-12.9-3.7-4.2-11.6-4.6-12.5-10.1-1-5.7 3.4-11.6 8.4-14.4 4.6-2.6 9.9.1 15 1.1 4.3.8 8.8.9 12.1 3.8Z"
+                            fill="#1c2130"></path>
+                        <rect opacity="0.6" width="52" height="52" rx="6" fill="url(#Gradient-0_c_1_r9)"
+                            transform="translate(2 2)"></rect>
+                        <rect width="48" height="48" rx="4" fill="url(#Gradient-1_c_1_r9)" transform="translate(4 4)">
+                        </rect>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M23.6 50.4c-3.9-.9-6.1-4.4-9-7.2-3-2.9-8.1-4.8-8-9 .2-4.1 5.9-5.2 8.7-8.3 3.1-3.5 3.8-9.5 8.3-10.5 4.8-1 9.9 2 12.9 5.9 2.8 3.6 1.6 8.4 1.8 12.9.4 5.1 3.4 10.9 0 14.6-3.5 3.8-9.7 2.8-14.7 1.6Z"
+                            fill="url(#Gradient-2_c_1_r9)"></path>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M19.9 26c.1-4 3-6.9 5.1-10.3 2.1-3.6 3-9 7.1-9.7 4.1-.8 6.3 4.6 10 6.6 4 2.3 10.1 1.7 12 5.9 2 4.5.1 10.1-3 13.9-2.9 3.5-7.9 3.3-12.3 4.5-4.8 1.4-9.9 5.6-14.3 3.1-4.4-2.6-4.7-8.9-4.6-14Z"
+                            fill="url(#Gradient-3_c_1_r9)"></path>
+                        <rect opacity="0.6" width="56" height="56" rx="8" fill="#151c2e"
+                            style="animation: 0.25s linear both a1_o_c_1_r;"></rect>
+                    </g>
+                </svg></button><button id="cellButton" type="button" class="cell"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none" viewBox="0 0 54 54">
+                    <defs>
+                        <radialGradient id="Gradient-2_c_2_r10" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse"
+                            gradientTransform="matrix(28.6228 -7.61449 6.96925 26.1973 5.358 50.625)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <radialGradient id="Gradient-3_c_2_r10" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse"
+                            gradientTransform="matrix(-26.8297 -12.5463 11.4831 -24.5562 19.703 45.611)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <linearGradient id="Gradient-0_c_2_r10" x1="58.152" y1="24.257" x2="-3.614" y2="28.984"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#d8fffc" stop-opacity="0.63"></stop>
+                            <stop offset="0.219" stop-color="#a0fff7" stop-opacity="0"></stop>
+                            <stop offset="0.491" stop-color="#8dfff6" stop-opacity="0.56"></stop>
+                            <stop offset="0.733" stop-color="#9af8f0"></stop>
+                            <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+                            <stop offset="1" stop-color="#bafff9" stop-opacity="0"></stop>
+                        </linearGradient>
+                        <linearGradient id="Gradient-1_c_2_r10" x1="24" y1="0" x2="24" y2="48"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#37b0ce"></stop>
+                            <stop offset="1" stop-color="#01586b"></stop>
+                        </linearGradient>
+                        <clipPath id="clip0_366_7284_c_2_r">
+                            <rect width="56" height="56" rx="7.593" fill="#fff"></rect>
+                        </clipPath>
+                    </defs>
+                    <style>
+                        @keyframes a0_t_c_2_r {
+                            0% {
+                                transform: translate(28px, 28px) scale(0, 0) translate(-28px, -28px);
+                                animation-timing-function: cubic-bezier(0, 0, .58, 1)
+                            }
+
+                            to {
+                                transform: translate(28px, 28px) scale(1, 1) translate(-28px, -28px)
+                            }
+                        }
+
+                        @keyframes a1_o_c_2_r {
+                            0% {
+                                opacity: .6
+                            }
+
+                            to {
+                                opacity: 0
+                            }
+                        }
+                    </style>
+                    <g clip-path="url(#clip0_366_7284_c_2_r)" transform="matrix(0 0 0 0 28 28)"
+                        style="animation: 0.25s linear both a0_t_c_2_r;">
+                        <rect opacity="0.7" width="56" height="56" rx="12" fill="#151C2E"></rect>
+                        <rect opacity="0.6" width="52" height="52" rx="10" fill="url(#Gradient-0_c_2_r10)"
+                            transform="translate(2 2)"></rect>
+                        <rect width="48" height="48" rx="8" fill="url(#Gradient-1_c_2_r10)" transform="translate(4 4)">
+                        </rect>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M14.834 60.127c3.731 1.672 7.732.204 11.798-.231 4.245-.454 9.628 1.157 12.1-2.325 2.466-3.477-1.482-7.917-1.818-12.166-.375-4.74 2.845-10.093-.23-13.719-3.261-3.844-9.295-4.521-14.177-3.264-4.482 1.155-6.48 5.88-9.52 9.37-3.412 3.912-9.48 6.762-9.052 11.935.43 5.202 6.134 8.266 10.899 10.4Z"
+                            fill="url(#Gradient-2_c_2_r10)"></path>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M8.7 53.292c-3.968.987-7.647-1.164-11.573-2.31-4.098-1.196-9.681-.56-11.498-4.423-1.815-3.857 2.854-7.531 3.935-11.655 1.205-4.599-1.02-10.436 2.648-13.462 3.888-3.208 9.947-2.81 14.53-.711 4.208 1.928 5.34 6.931 7.718 10.902 2.667 4.453 8.137 8.33 6.803 13.346-1.342 5.045-7.497 7.053-12.563 8.313Z"
+                            fill="url(#Gradient-3_c_2_r10)"></path>
+                        <rect opacity="0.6" width="56" height="56" rx="12" fill="#151C2E"
+                            style="animation: 0.25s linear both a1_o_c_2_r;"></rect>
+                    </g>
+                </svg></button><button id="cellButton" type="button" class="cell"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none" viewBox="0 0 54 54">
+                    <defs>
+                        <radialGradient id="Gradient-2_c_1_r11" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse" gradientTransform="matrix(-17.6 -22.9 21 -16.1 36.6 48.7)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <radialGradient id="Gradient-3_c_1_r11" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse" gradientTransform="matrix(18.6 -22.1 20.3 17 24.3 38.3)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <linearGradient id="Gradient-0_c_1_r11" x1="52" y1="52" x2="-2.3" y2="1"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#d8fffc" stop-opacity="0.63"></stop>
+                            <stop offset="0.2" stop-color="#a0fff7" stop-opacity="0"></stop>
+                            <stop offset="0.5" stop-color="#8dfff6" stop-opacity="0.56"></stop>
+                            <stop offset="0.7" stop-color="#9af8f0"></stop>
+                            <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+                            <stop offset="1" stop-color="#bafff9" stop-opacity="0"></stop>
+                        </linearGradient>
+                        <linearGradient id="Gradient-1_c_1_r11" x1="24" y1="0" x2="24" y2="48"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#37b0ce"></stop>
+                            <stop offset="1" stop-color="#01586b"></stop>
+                        </linearGradient>
+                        <clipPath id="ClipPath-1_c_1_r">
+                            <rect width="56" height="56" rx="8" fill="#fff"></rect>
+                        </clipPath>
+                    </defs>
+                    <style>
+                        @keyframes a0_t_c_1_r {
+                            0% {
+                                transform: translate(28px, 28px) scale(0, 0) translate(-28px, -28px);
+                                animation-timing-function: cubic-bezier(0, 0, .6, 1)
+                            }
+
+                            to {
+                                transform: translate(28px, 28px) scale(1, 1) translate(-28px, -28px)
+                            }
+                        }
+
+                        @keyframes a1_o_c_1_r {
+                            0% {
+                                opacity: .6
+                            }
+
+                            to {
+                                opacity: 0
+                            }
+                        }
+                    </style>
+                    <g clip-path="url(#ClipPath-1_c_1_r)" transform="matrix(0 0 0 0 28 28)"
+                        style="animation: 0.25s linear both a0_t_c_1_r;">
+                        <rect opacity="0.7" width="56" height="56" rx="8" fill="#151c2e"></rect>
+                        <path opacity="0.2" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M31.3 73.8c.2-5.9 4.5-10.1 7.6-15.1 3.3-5.2 4.6-13.1 10.6-14.1s9.3 6.8 14.6 9.9c5.8 3.5 14.8 2.7 17.5 8.9 2.9 6.6 0 14.8-4.6 20.3-4.3 5.1-11.7 4.7-18.1 6.4-7.1 2-14.6 8-21 4.3-6.5-3.8-6.8-13.1-6.6-20.6ZM23.8 44.2c3.6 3.3 7.2 8 6.2 12.8-.9 4.8-7 5.7-10.6 9-3.8 3.5-5.4 11.3-10.6 10.7-5.3-.6-4.5-9-8.1-13-3.7-4.1-11.5-4.6-12.4-10.1-1-5.7 3.4-11.5 8.4-14.4 4.5-2.6 9.9.2 15 1.1 4.3.8 8.8.9 12.1 3.9ZM51.3-5.2c3.6 3.4 7.2 8 6.3 12.9-1 4.7-7.1 5.7-10.6 8.9-3.9 3.6-5.5 11.4-10.7 10.7-5.3-.6-4.5-9-8-12.9-3.7-4.2-11.6-4.6-12.5-10.1-1-5.7 3.4-11.6 8.4-14.4 4.6-2.6 9.9.1 15 1.1 4.3.8 8.8.9 12.1 3.8Z"
+                            fill="#1c2130"></path>
+                        <rect opacity="0.6" width="52" height="52" rx="6" fill="url(#Gradient-0_c_1_r11)"
+                            transform="translate(2 2)"></rect>
+                        <rect width="48" height="48" rx="4" fill="url(#Gradient-1_c_1_r11)" transform="translate(4 4)">
+                        </rect>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M23.6 50.4c-3.9-.9-6.1-4.4-9-7.2-3-2.9-8.1-4.8-8-9 .2-4.1 5.9-5.2 8.7-8.3 3.1-3.5 3.8-9.5 8.3-10.5 4.8-1 9.9 2 12.9 5.9 2.8 3.6 1.6 8.4 1.8 12.9.4 5.1 3.4 10.9 0 14.6-3.5 3.8-9.7 2.8-14.7 1.6Z"
+                            fill="url(#Gradient-2_c_1_r11)"></path>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M19.9 26c.1-4 3-6.9 5.1-10.3 2.1-3.6 3-9 7.1-9.7 4.1-.8 6.3 4.6 10 6.6 4 2.3 10.1 1.7 12 5.9 2 4.5.1 10.1-3 13.9-2.9 3.5-7.9 3.3-12.3 4.5-4.8 1.4-9.9 5.6-14.3 3.1-4.4-2.6-4.7-8.9-4.6-14Z"
+                            fill="url(#Gradient-3_c_1_r11)"></path>
+                        <rect opacity="0.6" width="56" height="56" rx="8" fill="#151c2e"
+                            style="animation: 0.25s linear both a1_o_c_1_r;"></rect>
+                    </g>
+                </svg></button><button id="cellButton" type="button" class="cell"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none" viewBox="0 0 54 54">
+                    <defs>
+                        <radialGradient id="Gradient-2_c_2_r12" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse"
+                            gradientTransform="matrix(28.6228 -7.61449 6.96925 26.1973 5.358 50.625)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <radialGradient id="Gradient-3_c_2_r12" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse"
+                            gradientTransform="matrix(-26.8297 -12.5463 11.4831 -24.5562 19.703 45.611)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <linearGradient id="Gradient-0_c_2_r12" x1="58.152" y1="24.257" x2="-3.614" y2="28.984"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#d8fffc" stop-opacity="0.63"></stop>
+                            <stop offset="0.219" stop-color="#a0fff7" stop-opacity="0"></stop>
+                            <stop offset="0.491" stop-color="#8dfff6" stop-opacity="0.56"></stop>
+                            <stop offset="0.733" stop-color="#9af8f0"></stop>
+                            <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+                            <stop offset="1" stop-color="#bafff9" stop-opacity="0"></stop>
+                        </linearGradient>
+                        <linearGradient id="Gradient-1_c_2_r12" x1="24" y1="0" x2="24" y2="48"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#37b0ce"></stop>
+                            <stop offset="1" stop-color="#01586b"></stop>
+                        </linearGradient>
+                        <clipPath id="clip0_366_7284_c_2_r">
+                            <rect width="56" height="56" rx="7.593" fill="#fff"></rect>
+                        </clipPath>
+                    </defs>
+                    <style>
+                        @keyframes a0_t_c_2_r {
+                            0% {
+                                transform: translate(28px, 28px) scale(0, 0) translate(-28px, -28px);
+                                animation-timing-function: cubic-bezier(0, 0, .58, 1)
+                            }
+
+                            to {
+                                transform: translate(28px, 28px) scale(1, 1) translate(-28px, -28px)
+                            }
+                        }
+
+                        @keyframes a1_o_c_2_r {
+                            0% {
+                                opacity: .6
+                            }
+
+                            to {
+                                opacity: 0
+                            }
+                        }
+                    </style>
+                    <g clip-path="url(#clip0_366_7284_c_2_r)" transform="matrix(0 0 0 0 28 28)"
+                        style="animation: 0.25s linear both a0_t_c_2_r;">
+                        <rect opacity="0.7" width="56" height="56" rx="12" fill="#151C2E"></rect>
+                        <rect opacity="0.6" width="52" height="52" rx="10" fill="url(#Gradient-0_c_2_r12)"
+                            transform="translate(2 2)"></rect>
+                        <rect width="48" height="48" rx="8" fill="url(#Gradient-1_c_2_r12)" transform="translate(4 4)">
+                        </rect>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M14.834 60.127c3.731 1.672 7.732.204 11.798-.231 4.245-.454 9.628 1.157 12.1-2.325 2.466-3.477-1.482-7.917-1.818-12.166-.375-4.74 2.845-10.093-.23-13.719-3.261-3.844-9.295-4.521-14.177-3.264-4.482 1.155-6.48 5.88-9.52 9.37-3.412 3.912-9.48 6.762-9.052 11.935.43 5.202 6.134 8.266 10.899 10.4Z"
+                            fill="url(#Gradient-2_c_2_r12)"></path>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M8.7 53.292c-3.968.987-7.647-1.164-11.573-2.31-4.098-1.196-9.681-.56-11.498-4.423-1.815-3.857 2.854-7.531 3.935-11.655 1.205-4.599-1.02-10.436 2.648-13.462 3.888-3.208 9.947-2.81 14.53-.711 4.208 1.928 5.34 6.931 7.718 10.902 2.667 4.453 8.137 8.33 6.803 13.346-1.342 5.045-7.497 7.053-12.563 8.313Z"
+                            fill="url(#Gradient-3_c_2_r12)"></path>
+                        <rect opacity="0.6" width="56" height="56" rx="12" fill="#151C2E"
+                            style="animation: 0.25s linear both a1_o_c_2_r;"></rect>
+                    </g>
+                </svg></button><button id="cellButton" type="button" class="cell"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none" viewBox="0 0 54 54">
+                    <defs>
+                        <radialGradient id="Gradient-2_c_1_r13" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse" gradientTransform="matrix(-17.6 -22.9 21 -16.1 36.6 48.7)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <radialGradient id="Gradient-3_c_1_r13" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse" gradientTransform="matrix(18.6 -22.1 20.3 17 24.3 38.3)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <linearGradient id="Gradient-0_c_1_r13" x1="52" y1="52" x2="-2.3" y2="1"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#d8fffc" stop-opacity="0.63"></stop>
+                            <stop offset="0.2" stop-color="#a0fff7" stop-opacity="0"></stop>
+                            <stop offset="0.5" stop-color="#8dfff6" stop-opacity="0.56"></stop>
+                            <stop offset="0.7" stop-color="#9af8f0"></stop>
+                            <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+                            <stop offset="1" stop-color="#bafff9" stop-opacity="0"></stop>
+                        </linearGradient>
+                        <linearGradient id="Gradient-1_c_1_r13" x1="24" y1="0" x2="24" y2="48"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#37b0ce"></stop>
+                            <stop offset="1" stop-color="#01586b"></stop>
+                        </linearGradient>
+                        <clipPath id="ClipPath-1_c_1_r">
+                            <rect width="56" height="56" rx="8" fill="#fff"></rect>
+                        </clipPath>
+                    </defs>
+                    <style>
+                        @keyframes a0_t_c_1_r {
+                            0% {
+                                transform: translate(28px, 28px) scale(0, 0) translate(-28px, -28px);
+                                animation-timing-function: cubic-bezier(0, 0, .6, 1)
+                            }
+
+                            to {
+                                transform: translate(28px, 28px) scale(1, 1) translate(-28px, -28px)
+                            }
+                        }
+
+                        @keyframes a1_o_c_1_r {
+                            0% {
+                                opacity: .6
+                            }
+
+                            to {
+                                opacity: 0
+                            }
+                        }
+                    </style>
+                    <g clip-path="url(#ClipPath-1_c_1_r)" transform="matrix(0 0 0 0 28 28)"
+                        style="animation: 0.25s linear both a0_t_c_1_r;">
+                        <rect opacity="0.7" width="56" height="56" rx="8" fill="#151c2e"></rect>
+                        <path opacity="0.2" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M31.3 73.8c.2-5.9 4.5-10.1 7.6-15.1 3.3-5.2 4.6-13.1 10.6-14.1s9.3 6.8 14.6 9.9c5.8 3.5 14.8 2.7 17.5 8.9 2.9 6.6 0 14.8-4.6 20.3-4.3 5.1-11.7 4.7-18.1 6.4-7.1 2-14.6 8-21 4.3-6.5-3.8-6.8-13.1-6.6-20.6ZM23.8 44.2c3.6 3.3 7.2 8 6.2 12.8-.9 4.8-7 5.7-10.6 9-3.8 3.5-5.4 11.3-10.6 10.7-5.3-.6-4.5-9-8.1-13-3.7-4.1-11.5-4.6-12.4-10.1-1-5.7 3.4-11.5 8.4-14.4 4.5-2.6 9.9.2 15 1.1 4.3.8 8.8.9 12.1 3.9ZM51.3-5.2c3.6 3.4 7.2 8 6.3 12.9-1 4.7-7.1 5.7-10.6 8.9-3.9 3.6-5.5 11.4-10.7 10.7-5.3-.6-4.5-9-8-12.9-3.7-4.2-11.6-4.6-12.5-10.1-1-5.7 3.4-11.6 8.4-14.4 4.6-2.6 9.9.1 15 1.1 4.3.8 8.8.9 12.1 3.8Z"
+                            fill="#1c2130"></path>
+                        <rect opacity="0.6" width="52" height="52" rx="6" fill="url(#Gradient-0_c_1_r13)"
+                            transform="translate(2 2)"></rect>
+                        <rect width="48" height="48" rx="4" fill="url(#Gradient-1_c_1_r13)" transform="translate(4 4)">
+                        </rect>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M23.6 50.4c-3.9-.9-6.1-4.4-9-7.2-3-2.9-8.1-4.8-8-9 .2-4.1 5.9-5.2 8.7-8.3 3.1-3.5 3.8-9.5 8.3-10.5 4.8-1 9.9 2 12.9 5.9 2.8 3.6 1.6 8.4 1.8 12.9.4 5.1 3.4 10.9 0 14.6-3.5 3.8-9.7 2.8-14.7 1.6Z"
+                            fill="url(#Gradient-2_c_1_r13)"></path>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M19.9 26c.1-4 3-6.9 5.1-10.3 2.1-3.6 3-9 7.1-9.7 4.1-.8 6.3 4.6 10 6.6 4 2.3 10.1 1.7 12 5.9 2 4.5.1 10.1-3 13.9-2.9 3.5-7.9 3.3-12.3 4.5-4.8 1.4-9.9 5.6-14.3 3.1-4.4-2.6-4.7-8.9-4.6-14Z"
+                            fill="url(#Gradient-3_c_1_r13)"></path>
+                        <rect opacity="0.6" width="56" height="56" rx="8" fill="#151c2e"
+                            style="animation: 0.25s linear both a1_o_c_1_r;"></rect>
+                    </g>
+                </svg></button><button id="cellButton" type="button" class="cell"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none" viewBox="0 0 54 54">
+                    <defs>
+                        <radialGradient id="Gradient-2_c_2_r14" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse"
+                            gradientTransform="matrix(28.6228 -7.61449 6.96925 26.1973 5.358 50.625)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <radialGradient id="Gradient-3_c_2_r14" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse"
+                            gradientTransform="matrix(-26.8297 -12.5463 11.4831 -24.5562 19.703 45.611)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <linearGradient id="Gradient-0_c_2_r14" x1="58.152" y1="24.257" x2="-3.614" y2="28.984"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#d8fffc" stop-opacity="0.63"></stop>
+                            <stop offset="0.219" stop-color="#a0fff7" stop-opacity="0"></stop>
+                            <stop offset="0.491" stop-color="#8dfff6" stop-opacity="0.56"></stop>
+                            <stop offset="0.733" stop-color="#9af8f0"></stop>
+                            <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+                            <stop offset="1" stop-color="#bafff9" stop-opacity="0"></stop>
+                        </linearGradient>
+                        <linearGradient id="Gradient-1_c_2_r14" x1="24" y1="0" x2="24" y2="48"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#37b0ce"></stop>
+                            <stop offset="1" stop-color="#01586b"></stop>
+                        </linearGradient>
+                        <clipPath id="clip0_366_7284_c_2_r">
+                            <rect width="56" height="56" rx="7.593" fill="#fff"></rect>
+                        </clipPath>
+                    </defs>
+                    <style>
+                        @keyframes a0_t_c_2_r {
+                            0% {
+                                transform: translate(28px, 28px) scale(0, 0) translate(-28px, -28px);
+                                animation-timing-function: cubic-bezier(0, 0, .58, 1)
+                            }
+
+                            to {
+                                transform: translate(28px, 28px) scale(1, 1) translate(-28px, -28px)
+                            }
+                        }
+
+                        @keyframes a1_o_c_2_r {
+                            0% {
+                                opacity: .6
+                            }
+
+                            to {
+                                opacity: 0
+                            }
+                        }
+                    </style>
+                    <g clip-path="url(#clip0_366_7284_c_2_r)" transform="matrix(0 0 0 0 28 28)"
+                        style="animation: 0.25s linear both a0_t_c_2_r;">
+                        <rect opacity="0.7" width="56" height="56" rx="12" fill="#151C2E"></rect>
+                        <rect opacity="0.6" width="52" height="52" rx="10" fill="url(#Gradient-0_c_2_r14)"
+                            transform="translate(2 2)"></rect>
+                        <rect width="48" height="48" rx="8" fill="url(#Gradient-1_c_2_r14)" transform="translate(4 4)">
+                        </rect>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M14.834 60.127c3.731 1.672 7.732.204 11.798-.231 4.245-.454 9.628 1.157 12.1-2.325 2.466-3.477-1.482-7.917-1.818-12.166-.375-4.74 2.845-10.093-.23-13.719-3.261-3.844-9.295-4.521-14.177-3.264-4.482 1.155-6.48 5.88-9.52 9.37-3.412 3.912-9.48 6.762-9.052 11.935.43 5.202 6.134 8.266 10.899 10.4Z"
+                            fill="url(#Gradient-2_c_2_r14)"></path>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M8.7 53.292c-3.968.987-7.647-1.164-11.573-2.31-4.098-1.196-9.681-.56-11.498-4.423-1.815-3.857 2.854-7.531 3.935-11.655 1.205-4.599-1.02-10.436 2.648-13.462 3.888-3.208 9.947-2.81 14.53-.711 4.208 1.928 5.34 6.931 7.718 10.902 2.667 4.453 8.137 8.33 6.803 13.346-1.342 5.045-7.497 7.053-12.563 8.313Z"
+                            fill="url(#Gradient-3_c_2_r14)"></path>
+                        <rect opacity="0.6" width="56" height="56" rx="12" fill="#151C2E"
+                            style="animation: 0.25s linear both a1_o_c_2_r;"></rect>
+                    </g>
+                </svg></button><button id="cellButton" type="button" class="cell"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none" viewBox="0 0 54 54">
+                    <defs>
+                        <radialGradient id="Gradient-2_c_1_r15" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse" gradientTransform="matrix(-17.6 -22.9 21 -16.1 36.6 48.7)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <radialGradient id="Gradient-3_c_1_r15" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse" gradientTransform="matrix(18.6 -22.1 20.3 17 24.3 38.3)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <linearGradient id="Gradient-0_c_1_r15" x1="52" y1="52" x2="-2.3" y2="1"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#d8fffc" stop-opacity="0.63"></stop>
+                            <stop offset="0.2" stop-color="#a0fff7" stop-opacity="0"></stop>
+                            <stop offset="0.5" stop-color="#8dfff6" stop-opacity="0.56"></stop>
+                            <stop offset="0.7" stop-color="#9af8f0"></stop>
+                            <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+                            <stop offset="1" stop-color="#bafff9" stop-opacity="0"></stop>
+                        </linearGradient>
+                        <linearGradient id="Gradient-1_c_1_r15" x1="24" y1="0" x2="24" y2="48"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#37b0ce"></stop>
+                            <stop offset="1" stop-color="#01586b"></stop>
+                        </linearGradient>
+                        <clipPath id="ClipPath-1_c_1_r">
+                            <rect width="56" height="56" rx="8" fill="#fff"></rect>
+                        </clipPath>
+                    </defs>
+                    <style>
+                        @keyframes a0_t_c_1_r {
+                            0% {
+                                transform: translate(28px, 28px) scale(0, 0) translate(-28px, -28px);
+                                animation-timing-function: cubic-bezier(0, 0, .6, 1)
+                            }
+
+                            to {
+                                transform: translate(28px, 28px) scale(1, 1) translate(-28px, -28px)
+                            }
+                        }
+
+                        @keyframes a1_o_c_1_r {
+                            0% {
+                                opacity: .6
+                            }
+
+                            to {
+                                opacity: 0
+                            }
+                        }
+                    </style>
+                    <g clip-path="url(#ClipPath-1_c_1_r)" transform="matrix(0 0 0 0 28 28)"
+                        style="animation: 0.25s linear both a0_t_c_1_r;">
+                        <rect opacity="0.7" width="56" height="56" rx="8" fill="#151c2e"></rect>
+                        <path opacity="0.2" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M31.3 73.8c.2-5.9 4.5-10.1 7.6-15.1 3.3-5.2 4.6-13.1 10.6-14.1s9.3 6.8 14.6 9.9c5.8 3.5 14.8 2.7 17.5 8.9 2.9 6.6 0 14.8-4.6 20.3-4.3 5.1-11.7 4.7-18.1 6.4-7.1 2-14.6 8-21 4.3-6.5-3.8-6.8-13.1-6.6-20.6ZM23.8 44.2c3.6 3.3 7.2 8 6.2 12.8-.9 4.8-7 5.7-10.6 9-3.8 3.5-5.4 11.3-10.6 10.7-5.3-.6-4.5-9-8.1-13-3.7-4.1-11.5-4.6-12.4-10.1-1-5.7 3.4-11.5 8.4-14.4 4.5-2.6 9.9.2 15 1.1 4.3.8 8.8.9 12.1 3.9ZM51.3-5.2c3.6 3.4 7.2 8 6.3 12.9-1 4.7-7.1 5.7-10.6 8.9-3.9 3.6-5.5 11.4-10.7 10.7-5.3-.6-4.5-9-8-12.9-3.7-4.2-11.6-4.6-12.5-10.1-1-5.7 3.4-11.6 8.4-14.4 4.6-2.6 9.9.1 15 1.1 4.3.8 8.8.9 12.1 3.8Z"
+                            fill="#1c2130"></path>
+                        <rect opacity="0.6" width="52" height="52" rx="6" fill="url(#Gradient-0_c_1_r15)"
+                            transform="translate(2 2)"></rect>
+                        <rect width="48" height="48" rx="4" fill="url(#Gradient-1_c_1_r15)" transform="translate(4 4)">
+                        </rect>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M23.6 50.4c-3.9-.9-6.1-4.4-9-7.2-3-2.9-8.1-4.8-8-9 .2-4.1 5.9-5.2 8.7-8.3 3.1-3.5 3.8-9.5 8.3-10.5 4.8-1 9.9 2 12.9 5.9 2.8 3.6 1.6 8.4 1.8 12.9.4 5.1 3.4 10.9 0 14.6-3.5 3.8-9.7 2.8-14.7 1.6Z"
+                            fill="url(#Gradient-2_c_1_r15)"></path>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M19.9 26c.1-4 3-6.9 5.1-10.3 2.1-3.6 3-9 7.1-9.7 4.1-.8 6.3 4.6 10 6.6 4 2.3 10.1 1.7 12 5.9 2 4.5.1 10.1-3 13.9-2.9 3.5-7.9 3.3-12.3 4.5-4.8 1.4-9.9 5.6-14.3 3.1-4.4-2.6-4.7-8.9-4.6-14Z"
+                            fill="url(#Gradient-3_c_1_r15)"></path>
+                        <rect opacity="0.6" width="56" height="56" rx="8" fill="#151c2e"
+                            style="animation: 0.25s linear both a1_o_c_1_r;"></rect>
+                    </g>
+                </svg></button><button id="cellButton" type="button" class="cell"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none" viewBox="0 0 54 54">
+                    <defs>
+                        <radialGradient id="Gradient-2_c_2_r16" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse"
+                            gradientTransform="matrix(28.6228 -7.61449 6.96925 26.1973 5.358 50.625)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <radialGradient id="Gradient-3_c_2_r16" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse"
+                            gradientTransform="matrix(-26.8297 -12.5463 11.4831 -24.5562 19.703 45.611)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <linearGradient id="Gradient-0_c_2_r16" x1="58.152" y1="24.257" x2="-3.614" y2="28.984"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#d8fffc" stop-opacity="0.63"></stop>
+                            <stop offset="0.219" stop-color="#a0fff7" stop-opacity="0"></stop>
+                            <stop offset="0.491" stop-color="#8dfff6" stop-opacity="0.56"></stop>
+                            <stop offset="0.733" stop-color="#9af8f0"></stop>
+                            <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+                            <stop offset="1" stop-color="#bafff9" stop-opacity="0"></stop>
+                        </linearGradient>
+                        <linearGradient id="Gradient-1_c_2_r16" x1="24" y1="0" x2="24" y2="48"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#37b0ce"></stop>
+                            <stop offset="1" stop-color="#01586b"></stop>
+                        </linearGradient>
+                        <clipPath id="clip0_366_7284_c_2_r">
+                            <rect width="56" height="56" rx="7.593" fill="#fff"></rect>
+                        </clipPath>
+                    </defs>
+                    <style>
+                        @keyframes a0_t_c_2_r {
+                            0% {
+                                transform: translate(28px, 28px) scale(0, 0) translate(-28px, -28px);
+                                animation-timing-function: cubic-bezier(0, 0, .58, 1)
+                            }
+
+                            to {
+                                transform: translate(28px, 28px) scale(1, 1) translate(-28px, -28px)
+                            }
+                        }
+
+                        @keyframes a1_o_c_2_r {
+                            0% {
+                                opacity: .6
+                            }
+
+                            to {
+                                opacity: 0
+                            }
+                        }
+                    </style>
+                    <g clip-path="url(#clip0_366_7284_c_2_r)" transform="matrix(0 0 0 0 28 28)"
+                        style="animation: 0.25s linear both a0_t_c_2_r;">
+                        <rect opacity="0.7" width="56" height="56" rx="12" fill="#151C2E"></rect>
+                        <rect opacity="0.6" width="52" height="52" rx="10" fill="url(#Gradient-0_c_2_r16)"
+                            transform="translate(2 2)"></rect>
+                        <rect width="48" height="48" rx="8" fill="url(#Gradient-1_c_2_r16)" transform="translate(4 4)">
+                        </rect>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M14.834 60.127c3.731 1.672 7.732.204 11.798-.231 4.245-.454 9.628 1.157 12.1-2.325 2.466-3.477-1.482-7.917-1.818-12.166-.375-4.74 2.845-10.093-.23-13.719-3.261-3.844-9.295-4.521-14.177-3.264-4.482 1.155-6.48 5.88-9.52 9.37-3.412 3.912-9.48 6.762-9.052 11.935.43 5.202 6.134 8.266 10.899 10.4Z"
+                            fill="url(#Gradient-2_c_2_r16)"></path>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M8.7 53.292c-3.968.987-7.647-1.164-11.573-2.31-4.098-1.196-9.681-.56-11.498-4.423-1.815-3.857 2.854-7.531 3.935-11.655 1.205-4.599-1.02-10.436 2.648-13.462 3.888-3.208 9.947-2.81 14.53-.711 4.208 1.928 5.34 6.931 7.718 10.902 2.667 4.453 8.137 8.33 6.803 13.346-1.342 5.045-7.497 7.053-12.563 8.313Z"
+                            fill="url(#Gradient-3_c_2_r16)"></path>
+                        <rect opacity="0.6" width="56" height="56" rx="12" fill="#151C2E"
+                            style="animation: 0.25s linear both a1_o_c_2_r;"></rect>
+                    </g>
+                </svg></button><button id="cellButton" type="button" class="cell"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none" viewBox="0 0 54 54">
+                    <defs>
+                        <radialGradient id="Gradient-2_c_1_r17" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse" gradientTransform="matrix(-17.6 -22.9 21 -16.1 36.6 48.7)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <radialGradient id="Gradient-3_c_1_r17" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse" gradientTransform="matrix(18.6 -22.1 20.3 17 24.3 38.3)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <linearGradient id="Gradient-0_c_1_r17" x1="52" y1="52" x2="-2.3" y2="1"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#d8fffc" stop-opacity="0.63"></stop>
+                            <stop offset="0.2" stop-color="#a0fff7" stop-opacity="0"></stop>
+                            <stop offset="0.5" stop-color="#8dfff6" stop-opacity="0.56"></stop>
+                            <stop offset="0.7" stop-color="#9af8f0"></stop>
+                            <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+                            <stop offset="1" stop-color="#bafff9" stop-opacity="0"></stop>
+                        </linearGradient>
+                        <linearGradient id="Gradient-1_c_1_r17" x1="24" y1="0" x2="24" y2="48"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#37b0ce"></stop>
+                            <stop offset="1" stop-color="#01586b"></stop>
+                        </linearGradient>
+                        <clipPath id="ClipPath-1_c_1_r">
+                            <rect width="56" height="56" rx="8" fill="#fff"></rect>
+                        </clipPath>
+                    </defs>
+                    <style>
+                        @keyframes a0_t_c_1_r {
+                            0% {
+                                transform: translate(28px, 28px) scale(0, 0) translate(-28px, -28px);
+                                animation-timing-function: cubic-bezier(0, 0, .6, 1)
+                            }
+
+                            to {
+                                transform: translate(28px, 28px) scale(1, 1) translate(-28px, -28px)
+                            }
+                        }
+
+                        @keyframes a1_o_c_1_r {
+                            0% {
+                                opacity: .6
+                            }
+
+                            to {
+                                opacity: 0
+                            }
+                        }
+                    </style>
+                    <g clip-path="url(#ClipPath-1_c_1_r)" transform="matrix(0 0 0 0 28 28)"
+                        style="animation: 0.25s linear both a0_t_c_1_r;">
+                        <rect opacity="0.7" width="56" height="56" rx="8" fill="#151c2e"></rect>
+                        <path opacity="0.2" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M31.3 73.8c.2-5.9 4.5-10.1 7.6-15.1 3.3-5.2 4.6-13.1 10.6-14.1s9.3 6.8 14.6 9.9c5.8 3.5 14.8 2.7 17.5 8.9 2.9 6.6 0 14.8-4.6 20.3-4.3 5.1-11.7 4.7-18.1 6.4-7.1 2-14.6 8-21 4.3-6.5-3.8-6.8-13.1-6.6-20.6ZM23.8 44.2c3.6 3.3 7.2 8 6.2 12.8-.9 4.8-7 5.7-10.6 9-3.8 3.5-5.4 11.3-10.6 10.7-5.3-.6-4.5-9-8.1-13-3.7-4.1-11.5-4.6-12.4-10.1-1-5.7 3.4-11.5 8.4-14.4 4.5-2.6 9.9.2 15 1.1 4.3.8 8.8.9 12.1 3.9ZM51.3-5.2c3.6 3.4 7.2 8 6.3 12.9-1 4.7-7.1 5.7-10.6 8.9-3.9 3.6-5.5 11.4-10.7 10.7-5.3-.6-4.5-9-8-12.9-3.7-4.2-11.6-4.6-12.5-10.1-1-5.7 3.4-11.6 8.4-14.4 4.6-2.6 9.9.1 15 1.1 4.3.8 8.8.9 12.1 3.8Z"
+                            fill="#1c2130"></path>
+                        <rect opacity="0.6" width="52" height="52" rx="6" fill="url(#Gradient-0_c_1_r17)"
+                            transform="translate(2 2)"></rect>
+                        <rect width="48" height="48" rx="4" fill="url(#Gradient-1_c_1_r17)" transform="translate(4 4)">
+                        </rect>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M23.6 50.4c-3.9-.9-6.1-4.4-9-7.2-3-2.9-8.1-4.8-8-9 .2-4.1 5.9-5.2 8.7-8.3 3.1-3.5 3.8-9.5 8.3-10.5 4.8-1 9.9 2 12.9 5.9 2.8 3.6 1.6 8.4 1.8 12.9.4 5.1 3.4 10.9 0 14.6-3.5 3.8-9.7 2.8-14.7 1.6Z"
+                            fill="url(#Gradient-2_c_1_r17)"></path>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M19.9 26c.1-4 3-6.9 5.1-10.3 2.1-3.6 3-9 7.1-9.7 4.1-.8 6.3 4.6 10 6.6 4 2.3 10.1 1.7 12 5.9 2 4.5.1 10.1-3 13.9-2.9 3.5-7.9 3.3-12.3 4.5-4.8 1.4-9.9 5.6-14.3 3.1-4.4-2.6-4.7-8.9-4.6-14Z"
+                            fill="url(#Gradient-3_c_1_r17)"></path>
+                        <rect opacity="0.6" width="56" height="56" rx="8" fill="#151c2e"
+                            style="animation: 0.25s linear both a1_o_c_1_r;"></rect>
+                    </g>
+                </svg></button><button id="cellButton" type="button" class="cell"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none" viewBox="0 0 54 54">
+                    <defs>
+                        <radialGradient id="Gradient-2_c_2_r18" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse"
+                            gradientTransform="matrix(28.6228 -7.61449 6.96925 26.1973 5.358 50.625)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <radialGradient id="Gradient-3_c_2_r18" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse"
+                            gradientTransform="matrix(-26.8297 -12.5463 11.4831 -24.5562 19.703 45.611)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <linearGradient id="Gradient-0_c_2_r18" x1="58.152" y1="24.257" x2="-3.614" y2="28.984"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#d8fffc" stop-opacity="0.63"></stop>
+                            <stop offset="0.219" stop-color="#a0fff7" stop-opacity="0"></stop>
+                            <stop offset="0.491" stop-color="#8dfff6" stop-opacity="0.56"></stop>
+                            <stop offset="0.733" stop-color="#9af8f0"></stop>
+                            <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+                            <stop offset="1" stop-color="#bafff9" stop-opacity="0"></stop>
+                        </linearGradient>
+                        <linearGradient id="Gradient-1_c_2_r18" x1="24" y1="0" x2="24" y2="48"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#37b0ce"></stop>
+                            <stop offset="1" stop-color="#01586b"></stop>
+                        </linearGradient>
+                        <clipPath id="clip0_366_7284_c_2_r">
+                            <rect width="56" height="56" rx="7.593" fill="#fff"></rect>
+                        </clipPath>
+                    </defs>
+                    <style>
+                        @keyframes a0_t_c_2_r {
+                            0% {
+                                transform: translate(28px, 28px) scale(0, 0) translate(-28px, -28px);
+                                animation-timing-function: cubic-bezier(0, 0, .58, 1)
+                            }
+
+                            to {
+                                transform: translate(28px, 28px) scale(1, 1) translate(-28px, -28px)
+                            }
+                        }
+
+                        @keyframes a1_o_c_2_r {
+                            0% {
+                                opacity: .6
+                            }
+
+                            to {
+                                opacity: 0
+                            }
+                        }
+                    </style>
+                    <g clip-path="url(#clip0_366_7284_c_2_r)" transform="matrix(0 0 0 0 28 28)"
+                        style="animation: 0.25s linear both a0_t_c_2_r;">
+                        <rect opacity="0.7" width="56" height="56" rx="12" fill="#151C2E"></rect>
+                        <rect opacity="0.6" width="52" height="52" rx="10" fill="url(#Gradient-0_c_2_r18)"
+                            transform="translate(2 2)"></rect>
+                        <rect width="48" height="48" rx="8" fill="url(#Gradient-1_c_2_r18)" transform="translate(4 4)">
+                        </rect>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M14.834 60.127c3.731 1.672 7.732.204 11.798-.231 4.245-.454 9.628 1.157 12.1-2.325 2.466-3.477-1.482-7.917-1.818-12.166-.375-4.74 2.845-10.093-.23-13.719-3.261-3.844-9.295-4.521-14.177-3.264-4.482 1.155-6.48 5.88-9.52 9.37-3.412 3.912-9.48 6.762-9.052 11.935.43 5.202 6.134 8.266 10.899 10.4Z"
+                            fill="url(#Gradient-2_c_2_r18)"></path>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M8.7 53.292c-3.968.987-7.647-1.164-11.573-2.31-4.098-1.196-9.681-.56-11.498-4.423-1.815-3.857 2.854-7.531 3.935-11.655 1.205-4.599-1.02-10.436 2.648-13.462 3.888-3.208 9.947-2.81 14.53-.711 4.208 1.928 5.34 6.931 7.718 10.902 2.667 4.453 8.137 8.33 6.803 13.346-1.342 5.045-7.497 7.053-12.563 8.313Z"
+                            fill="url(#Gradient-3_c_2_r18)"></path>
+                        <rect opacity="0.6" width="56" height="56" rx="12" fill="#151C2E"
+                            style="animation: 0.25s linear both a1_o_c_2_r;"></rect>
+                    </g>
+                </svg></button><button id="cellButton" type="button" class="cell"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none" viewBox="0 0 54 54">
+                    <defs>
+                        <radialGradient id="Gradient-2_c_1_r19" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse" gradientTransform="matrix(-17.6 -22.9 21 -16.1 36.6 48.7)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <radialGradient id="Gradient-3_c_1_r19" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse" gradientTransform="matrix(18.6 -22.1 20.3 17 24.3 38.3)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <linearGradient id="Gradient-0_c_1_r19" x1="52" y1="52" x2="-2.3" y2="1"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#d8fffc" stop-opacity="0.63"></stop>
+                            <stop offset="0.2" stop-color="#a0fff7" stop-opacity="0"></stop>
+                            <stop offset="0.5" stop-color="#8dfff6" stop-opacity="0.56"></stop>
+                            <stop offset="0.7" stop-color="#9af8f0"></stop>
+                            <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+                            <stop offset="1" stop-color="#bafff9" stop-opacity="0"></stop>
+                        </linearGradient>
+                        <linearGradient id="Gradient-1_c_1_r19" x1="24" y1="0" x2="24" y2="48"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#37b0ce"></stop>
+                            <stop offset="1" stop-color="#01586b"></stop>
+                        </linearGradient>
+                        <clipPath id="ClipPath-1_c_1_r">
+                            <rect width="56" height="56" rx="8" fill="#fff"></rect>
+                        </clipPath>
+                    </defs>
+                    <style>
+                        @keyframes a0_t_c_1_r {
+                            0% {
+                                transform: translate(28px, 28px) scale(0, 0) translate(-28px, -28px);
+                                animation-timing-function: cubic-bezier(0, 0, .6, 1)
+                            }
+
+                            to {
+                                transform: translate(28px, 28px) scale(1, 1) translate(-28px, -28px)
+                            }
+                        }
+
+                        @keyframes a1_o_c_1_r {
+                            0% {
+                                opacity: .6
+                            }
+
+                            to {
+                                opacity: 0
+                            }
+                        }
+                    </style>
+                    <g clip-path="url(#ClipPath-1_c_1_r)" transform="matrix(0 0 0 0 28 28)"
+                        style="animation: 0.25s linear both a0_t_c_1_r;">
+                        <rect opacity="0.7" width="56" height="56" rx="8" fill="#151c2e"></rect>
+                        <path opacity="0.2" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M31.3 73.8c.2-5.9 4.5-10.1 7.6-15.1 3.3-5.2 4.6-13.1 10.6-14.1s9.3 6.8 14.6 9.9c5.8 3.5 14.8 2.7 17.5 8.9 2.9 6.6 0 14.8-4.6 20.3-4.3 5.1-11.7 4.7-18.1 6.4-7.1 2-14.6 8-21 4.3-6.5-3.8-6.8-13.1-6.6-20.6ZM23.8 44.2c3.6 3.3 7.2 8 6.2 12.8-.9 4.8-7 5.7-10.6 9-3.8 3.5-5.4 11.3-10.6 10.7-5.3-.6-4.5-9-8.1-13-3.7-4.1-11.5-4.6-12.4-10.1-1-5.7 3.4-11.5 8.4-14.4 4.5-2.6 9.9.2 15 1.1 4.3.8 8.8.9 12.1 3.9ZM51.3-5.2c3.6 3.4 7.2 8 6.3 12.9-1 4.7-7.1 5.7-10.6 8.9-3.9 3.6-5.5 11.4-10.7 10.7-5.3-.6-4.5-9-8-12.9-3.7-4.2-11.6-4.6-12.5-10.1-1-5.7 3.4-11.6 8.4-14.4 4.6-2.6 9.9.1 15 1.1 4.3.8 8.8.9 12.1 3.8Z"
+                            fill="#1c2130"></path>
+                        <rect opacity="0.6" width="52" height="52" rx="6" fill="url(#Gradient-0_c_1_r19)"
+                            transform="translate(2 2)"></rect>
+                        <rect width="48" height="48" rx="4" fill="url(#Gradient-1_c_1_r19)" transform="translate(4 4)">
+                        </rect>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M23.6 50.4c-3.9-.9-6.1-4.4-9-7.2-3-2.9-8.1-4.8-8-9 .2-4.1 5.9-5.2 8.7-8.3 3.1-3.5 3.8-9.5 8.3-10.5 4.8-1 9.9 2 12.9 5.9 2.8 3.6 1.6 8.4 1.8 12.9.4 5.1 3.4 10.9 0 14.6-3.5 3.8-9.7 2.8-14.7 1.6Z"
+                            fill="url(#Gradient-2_c_1_r19)"></path>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M19.9 26c.1-4 3-6.9 5.1-10.3 2.1-3.6 3-9 7.1-9.7 4.1-.8 6.3 4.6 10 6.6 4 2.3 10.1 1.7 12 5.9 2 4.5.1 10.1-3 13.9-2.9 3.5-7.9 3.3-12.3 4.5-4.8 1.4-9.9 5.6-14.3 3.1-4.4-2.6-4.7-8.9-4.6-14Z"
+                            fill="url(#Gradient-3_c_1_r19)"></path>
+                        <rect opacity="0.6" width="56" height="56" rx="8" fill="#151c2e"
+                            style="animation: 0.25s linear both a1_o_c_1_r;"></rect>
+                    </g>
+                </svg></button><button id="cellButton" type="button" class="cell"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none" viewBox="0 0 54 54">
+                    <defs>
+                        <radialGradient id="Gradient-2_c_2_r20" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse"
+                            gradientTransform="matrix(28.6228 -7.61449 6.96925 26.1973 5.358 50.625)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <radialGradient id="Gradient-3_c_2_r20" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse"
+                            gradientTransform="matrix(-26.8297 -12.5463 11.4831 -24.5562 19.703 45.611)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <linearGradient id="Gradient-0_c_2_r20" x1="58.152" y1="24.257" x2="-3.614" y2="28.984"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#d8fffc" stop-opacity="0.63"></stop>
+                            <stop offset="0.219" stop-color="#a0fff7" stop-opacity="0"></stop>
+                            <stop offset="0.491" stop-color="#8dfff6" stop-opacity="0.56"></stop>
+                            <stop offset="0.733" stop-color="#9af8f0"></stop>
+                            <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+                            <stop offset="1" stop-color="#bafff9" stop-opacity="0"></stop>
+                        </linearGradient>
+                        <linearGradient id="Gradient-1_c_2_r20" x1="24" y1="0" x2="24" y2="48"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#37b0ce"></stop>
+                            <stop offset="1" stop-color="#01586b"></stop>
+                        </linearGradient>
+                        <clipPath id="clip0_366_7284_c_2_r">
+                            <rect width="56" height="56" rx="7.593" fill="#fff"></rect>
+                        </clipPath>
+                    </defs>
+                    <style>
+                        @keyframes a0_t_c_2_r {
+                            0% {
+                                transform: translate(28px, 28px) scale(0, 0) translate(-28px, -28px);
+                                animation-timing-function: cubic-bezier(0, 0, .58, 1)
+                            }
+
+                            to {
+                                transform: translate(28px, 28px) scale(1, 1) translate(-28px, -28px)
+                            }
+                        }
+
+                        @keyframes a1_o_c_2_r {
+                            0% {
+                                opacity: .6
+                            }
+
+                            to {
+                                opacity: 0
+                            }
+                        }
+                    </style>
+                    <g clip-path="url(#clip0_366_7284_c_2_r)" transform="matrix(0 0 0 0 28 28)"
+                        style="animation: 0.25s linear both a0_t_c_2_r;">
+                        <rect opacity="0.7" width="56" height="56" rx="12" fill="#151C2E"></rect>
+                        <rect opacity="0.6" width="52" height="52" rx="10" fill="url(#Gradient-0_c_2_r20)"
+                            transform="translate(2 2)"></rect>
+                        <rect width="48" height="48" rx="8" fill="url(#Gradient-1_c_2_r20)" transform="translate(4 4)">
+                        </rect>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M14.834 60.127c3.731 1.672 7.732.204 11.798-.231 4.245-.454 9.628 1.157 12.1-2.325 2.466-3.477-1.482-7.917-1.818-12.166-.375-4.74 2.845-10.093-.23-13.719-3.261-3.844-9.295-4.521-14.177-3.264-4.482 1.155-6.48 5.88-9.52 9.37-3.412 3.912-9.48 6.762-9.052 11.935.43 5.202 6.134 8.266 10.899 10.4Z"
+                            fill="url(#Gradient-2_c_2_r20)"></path>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M8.7 53.292c-3.968.987-7.647-1.164-11.573-2.31-4.098-1.196-9.681-.56-11.498-4.423-1.815-3.857 2.854-7.531 3.935-11.655 1.205-4.599-1.02-10.436 2.648-13.462 3.888-3.208 9.947-2.81 14.53-.711 4.208 1.928 5.34 6.931 7.718 10.902 2.667 4.453 8.137 8.33 6.803 13.346-1.342 5.045-7.497 7.053-12.563 8.313Z"
+                            fill="url(#Gradient-3_c_2_r20)"></path>
+                        <rect opacity="0.6" width="56" height="56" rx="12" fill="#151C2E"
+                            style="animation: 0.25s linear both a1_o_c_2_r;"></rect>
+                    </g>
+                </svg></button><button id="cellButton" type="button" class="cell"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none" viewBox="0 0 54 54">
+                    <defs>
+                        <radialGradient id="Gradient-2_c_1_r21" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse" gradientTransform="matrix(-17.6 -22.9 21 -16.1 36.6 48.7)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <radialGradient id="Gradient-3_c_1_r21" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse" gradientTransform="matrix(18.6 -22.1 20.3 17 24.3 38.3)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <linearGradient id="Gradient-0_c_1_r21" x1="52" y1="52" x2="-2.3" y2="1"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#d8fffc" stop-opacity="0.63"></stop>
+                            <stop offset="0.2" stop-color="#a0fff7" stop-opacity="0"></stop>
+                            <stop offset="0.5" stop-color="#8dfff6" stop-opacity="0.56"></stop>
+                            <stop offset="0.7" stop-color="#9af8f0"></stop>
+                            <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+                            <stop offset="1" stop-color="#bafff9" stop-opacity="0"></stop>
+                        </linearGradient>
+                        <linearGradient id="Gradient-1_c_1_r21" x1="24" y1="0" x2="24" y2="48"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#37b0ce"></stop>
+                            <stop offset="1" stop-color="#01586b"></stop>
+                        </linearGradient>
+                        <clipPath id="ClipPath-1_c_1_r">
+                            <rect width="56" height="56" rx="8" fill="#fff"></rect>
+                        </clipPath>
+                    </defs>
+                    <style>
+                        @keyframes a0_t_c_1_r {
+                            0% {
+                                transform: translate(28px, 28px) scale(0, 0) translate(-28px, -28px);
+                                animation-timing-function: cubic-bezier(0, 0, .6, 1)
+                            }
+
+                            to {
+                                transform: translate(28px, 28px) scale(1, 1) translate(-28px, -28px)
+                            }
+                        }
+
+                        @keyframes a1_o_c_1_r {
+                            0% {
+                                opacity: .6
+                            }
+
+                            to {
+                                opacity: 0
+                            }
+                        }
+                    </style>
+                    <g clip-path="url(#ClipPath-1_c_1_r)" transform="matrix(0 0 0 0 28 28)"
+                        style="animation: 0.25s linear both a0_t_c_1_r;">
+                        <rect opacity="0.7" width="56" height="56" rx="8" fill="#151c2e"></rect>
+                        <path opacity="0.2" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M31.3 73.8c.2-5.9 4.5-10.1 7.6-15.1 3.3-5.2 4.6-13.1 10.6-14.1s9.3 6.8 14.6 9.9c5.8 3.5 14.8 2.7 17.5 8.9 2.9 6.6 0 14.8-4.6 20.3-4.3 5.1-11.7 4.7-18.1 6.4-7.1 2-14.6 8-21 4.3-6.5-3.8-6.8-13.1-6.6-20.6ZM23.8 44.2c3.6 3.3 7.2 8 6.2 12.8-.9 4.8-7 5.7-10.6 9-3.8 3.5-5.4 11.3-10.6 10.7-5.3-.6-4.5-9-8.1-13-3.7-4.1-11.5-4.6-12.4-10.1-1-5.7 3.4-11.5 8.4-14.4 4.5-2.6 9.9.2 15 1.1 4.3.8 8.8.9 12.1 3.9ZM51.3-5.2c3.6 3.4 7.2 8 6.3 12.9-1 4.7-7.1 5.7-10.6 8.9-3.9 3.6-5.5 11.4-10.7 10.7-5.3-.6-4.5-9-8-12.9-3.7-4.2-11.6-4.6-12.5-10.1-1-5.7 3.4-11.6 8.4-14.4 4.6-2.6 9.9.1 15 1.1 4.3.8 8.8.9 12.1 3.8Z"
+                            fill="#1c2130"></path>
+                        <rect opacity="0.6" width="52" height="52" rx="6" fill="url(#Gradient-0_c_1_r21)"
+                            transform="translate(2 2)"></rect>
+                        <rect width="48" height="48" rx="4" fill="url(#Gradient-1_c_1_r21)" transform="translate(4 4)">
+                        </rect>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M23.6 50.4c-3.9-.9-6.1-4.4-9-7.2-3-2.9-8.1-4.8-8-9 .2-4.1 5.9-5.2 8.7-8.3 3.1-3.5 3.8-9.5 8.3-10.5 4.8-1 9.9 2 12.9 5.9 2.8 3.6 1.6 8.4 1.8 12.9.4 5.1 3.4 10.9 0 14.6-3.5 3.8-9.7 2.8-14.7 1.6Z"
+                            fill="url(#Gradient-2_c_1_r21)"></path>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M19.9 26c.1-4 3-6.9 5.1-10.3 2.1-3.6 3-9 7.1-9.7 4.1-.8 6.3 4.6 10 6.6 4 2.3 10.1 1.7 12 5.9 2 4.5.1 10.1-3 13.9-2.9 3.5-7.9 3.3-12.3 4.5-4.8 1.4-9.9 5.6-14.3 3.1-4.4-2.6-4.7-8.9-4.6-14Z"
+                            fill="url(#Gradient-3_c_1_r21)"></path>
+                        <rect opacity="0.6" width="56" height="56" rx="8" fill="#151c2e"
+                            style="animation: 0.25s linear both a1_o_c_1_r;"></rect>
+                    </g>
+                </svg></button><button id="cellButton" type="button" class="cell"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none" viewBox="0 0 54 54">
+                    <defs>
+                        <radialGradient id="Gradient-2_c_2_r22" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse"
+                            gradientTransform="matrix(28.6228 -7.61449 6.96925 26.1973 5.358 50.625)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <radialGradient id="Gradient-3_c_2_r22" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse"
+                            gradientTransform="matrix(-26.8297 -12.5463 11.4831 -24.5562 19.703 45.611)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <linearGradient id="Gradient-0_c_2_r22" x1="58.152" y1="24.257" x2="-3.614" y2="28.984"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#d8fffc" stop-opacity="0.63"></stop>
+                            <stop offset="0.219" stop-color="#a0fff7" stop-opacity="0"></stop>
+                            <stop offset="0.491" stop-color="#8dfff6" stop-opacity="0.56"></stop>
+                            <stop offset="0.733" stop-color="#9af8f0"></stop>
+                            <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+                            <stop offset="1" stop-color="#bafff9" stop-opacity="0"></stop>
+                        </linearGradient>
+                        <linearGradient id="Gradient-1_c_2_r22" x1="24" y1="0" x2="24" y2="48"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#37b0ce"></stop>
+                            <stop offset="1" stop-color="#01586b"></stop>
+                        </linearGradient>
+                        <clipPath id="clip0_366_7284_c_2_r">
+                            <rect width="56" height="56" rx="7.593" fill="#fff"></rect>
+                        </clipPath>
+                    </defs>
+                    <style>
+                        @keyframes a0_t_c_2_r {
+                            0% {
+                                transform: translate(28px, 28px) scale(0, 0) translate(-28px, -28px);
+                                animation-timing-function: cubic-bezier(0, 0, .58, 1)
+                            }
+
+                            to {
+                                transform: translate(28px, 28px) scale(1, 1) translate(-28px, -28px)
+                            }
+                        }
+
+                        @keyframes a1_o_c_2_r {
+                            0% {
+                                opacity: .6
+                            }
+
+                            to {
+                                opacity: 0
+                            }
+                        }
+                    </style>
+                    <g clip-path="url(#clip0_366_7284_c_2_r)" transform="matrix(0 0 0 0 28 28)"
+                        style="animation: 0.25s linear both a0_t_c_2_r;">
+                        <rect opacity="0.7" width="56" height="56" rx="12" fill="#151C2E"></rect>
+                        <rect opacity="0.6" width="52" height="52" rx="10" fill="url(#Gradient-0_c_2_r22)"
+                            transform="translate(2 2)"></rect>
+                        <rect width="48" height="48" rx="8" fill="url(#Gradient-1_c_2_r22)" transform="translate(4 4)">
+                        </rect>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M14.834 60.127c3.731 1.672 7.732.204 11.798-.231 4.245-.454 9.628 1.157 12.1-2.325 2.466-3.477-1.482-7.917-1.818-12.166-.375-4.74 2.845-10.093-.23-13.719-3.261-3.844-9.295-4.521-14.177-3.264-4.482 1.155-6.48 5.88-9.52 9.37-3.412 3.912-9.48 6.762-9.052 11.935.43 5.202 6.134 8.266 10.899 10.4Z"
+                            fill="url(#Gradient-2_c_2_r22)"></path>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M8.7 53.292c-3.968.987-7.647-1.164-11.573-2.31-4.098-1.196-9.681-.56-11.498-4.423-1.815-3.857 2.854-7.531 3.935-11.655 1.205-4.599-1.02-10.436 2.648-13.462 3.888-3.208 9.947-2.81 14.53-.711 4.208 1.928 5.34 6.931 7.718 10.902 2.667 4.453 8.137 8.33 6.803 13.346-1.342 5.045-7.497 7.053-12.563 8.313Z"
+                            fill="url(#Gradient-3_c_2_r22)"></path>
+                        <rect opacity="0.6" width="56" height="56" rx="12" fill="#151C2E"
+                            style="animation: 0.25s linear both a1_o_c_2_r;"></rect>
+                    </g>
+                </svg></button><button id="cellButton" type="button" class="cell"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none" viewBox="0 0 54 54">
+                    <defs>
+                        <radialGradient id="Gradient-2_c_1_r23" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse" gradientTransform="matrix(-17.6 -22.9 21 -16.1 36.6 48.7)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <radialGradient id="Gradient-3_c_1_r23" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse" gradientTransform="matrix(18.6 -22.1 20.3 17 24.3 38.3)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <linearGradient id="Gradient-0_c_1_r23" x1="52" y1="52" x2="-2.3" y2="1"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#d8fffc" stop-opacity="0.63"></stop>
+                            <stop offset="0.2" stop-color="#a0fff7" stop-opacity="0"></stop>
+                            <stop offset="0.5" stop-color="#8dfff6" stop-opacity="0.56"></stop>
+                            <stop offset="0.7" stop-color="#9af8f0"></stop>
+                            <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+                            <stop offset="1" stop-color="#bafff9" stop-opacity="0"></stop>
+                        </linearGradient>
+                        <linearGradient id="Gradient-1_c_1_r23" x1="24" y1="0" x2="24" y2="48"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#37b0ce"></stop>
+                            <stop offset="1" stop-color="#01586b"></stop>
+                        </linearGradient>
+                        <clipPath id="ClipPath-1_c_1_r">
+                            <rect width="56" height="56" rx="8" fill="#fff"></rect>
+                        </clipPath>
+                    </defs>
+                    <style>
+                        @keyframes a0_t_c_1_r {
+                            0% {
+                                transform: translate(28px, 28px) scale(0, 0) translate(-28px, -28px);
+                                animation-timing-function: cubic-bezier(0, 0, .6, 1)
+                            }
+
+                            to {
+                                transform: translate(28px, 28px) scale(1, 1) translate(-28px, -28px)
+                            }
+                        }
+
+                        @keyframes a1_o_c_1_r {
+                            0% {
+                                opacity: .6
+                            }
+
+                            to {
+                                opacity: 0
+                            }
+                        }
+                    </style>
+                    <g clip-path="url(#ClipPath-1_c_1_r)" transform="matrix(0 0 0 0 28 28)"
+                        style="animation: 0.25s linear both a0_t_c_1_r;">
+                        <rect opacity="0.7" width="56" height="56" rx="8" fill="#151c2e"></rect>
+                        <path opacity="0.2" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M31.3 73.8c.2-5.9 4.5-10.1 7.6-15.1 3.3-5.2 4.6-13.1 10.6-14.1s9.3 6.8 14.6 9.9c5.8 3.5 14.8 2.7 17.5 8.9 2.9 6.6 0 14.8-4.6 20.3-4.3 5.1-11.7 4.7-18.1 6.4-7.1 2-14.6 8-21 4.3-6.5-3.8-6.8-13.1-6.6-20.6ZM23.8 44.2c3.6 3.3 7.2 8 6.2 12.8-.9 4.8-7 5.7-10.6 9-3.8 3.5-5.4 11.3-10.6 10.7-5.3-.6-4.5-9-8.1-13-3.7-4.1-11.5-4.6-12.4-10.1-1-5.7 3.4-11.5 8.4-14.4 4.5-2.6 9.9.2 15 1.1 4.3.8 8.8.9 12.1 3.9ZM51.3-5.2c3.6 3.4 7.2 8 6.3 12.9-1 4.7-7.1 5.7-10.6 8.9-3.9 3.6-5.5 11.4-10.7 10.7-5.3-.6-4.5-9-8-12.9-3.7-4.2-11.6-4.6-12.5-10.1-1-5.7 3.4-11.6 8.4-14.4 4.6-2.6 9.9.1 15 1.1 4.3.8 8.8.9 12.1 3.8Z"
+                            fill="#1c2130"></path>
+                        <rect opacity="0.6" width="52" height="52" rx="6" fill="url(#Gradient-0_c_1_r23)"
+                            transform="translate(2 2)"></rect>
+                        <rect width="48" height="48" rx="4" fill="url(#Gradient-1_c_1_r23)" transform="translate(4 4)">
+                        </rect>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M23.6 50.4c-3.9-.9-6.1-4.4-9-7.2-3-2.9-8.1-4.8-8-9 .2-4.1 5.9-5.2 8.7-8.3 3.1-3.5 3.8-9.5 8.3-10.5 4.8-1 9.9 2 12.9 5.9 2.8 3.6 1.6 8.4 1.8 12.9.4 5.1 3.4 10.9 0 14.6-3.5 3.8-9.7 2.8-14.7 1.6Z"
+                            fill="url(#Gradient-2_c_1_r23)"></path>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M19.9 26c.1-4 3-6.9 5.1-10.3 2.1-3.6 3-9 7.1-9.7 4.1-.8 6.3 4.6 10 6.6 4 2.3 10.1 1.7 12 5.9 2 4.5.1 10.1-3 13.9-2.9 3.5-7.9 3.3-12.3 4.5-4.8 1.4-9.9 5.6-14.3 3.1-4.4-2.6-4.7-8.9-4.6-14Z"
+                            fill="url(#Gradient-3_c_1_r23)"></path>
+                        <rect opacity="0.6" width="56" height="56" rx="8" fill="#151c2e"
+                            style="animation: 0.25s linear both a1_o_c_1_r;"></rect>
+                    </g>
+                </svg></button>
+            <button id="cellButton" type="button" class="cell">
+                <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none" viewBox="0 0 54 54">
+                    <defs>
+                        <radialGradient id="Gradient-2_c_2_r24" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse"
+                            gradientTransform="matrix(28.6228 -7.61449 6.96925 26.1973 5.358 50.625)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <radialGradient id="Gradient-3_c_2_r24" cx="0" cy="0" r="1" fx="0" fy="0"
+                            gradientUnits="userSpaceOnUse"
+                            gradientTransform="matrix(-26.8297 -12.5463 11.4831 -24.5562 19.703 45.611)">
+                            <stop offset="0" stop-color="#1c2130"></stop>
+                            <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+                        </radialGradient>
+                        <linearGradient id="Gradient-0_c_2_r24" x1="58.152" y1="24.257" x2="-3.614" y2="28.984"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#d8fffc" stop-opacity="0.63"></stop>
+                            <stop offset="0.219" stop-color="#a0fff7" stop-opacity="0"></stop>
+                            <stop offset="0.491" stop-color="#8dfff6" stop-opacity="0.56"></stop>
+                            <stop offset="0.733" stop-color="#9af8f0"></stop>
+                            <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+                            <stop offset="1" stop-color="#bafff9" stop-opacity="0"></stop>
+                        </linearGradient>
+                        <linearGradient id="Gradient-1_c_2_r24" x1="24" y1="0" x2="24" y2="48"
+                            gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#37b0ce"></stop>
+                            <stop offset="1" stop-color="#01586b"></stop>
+                        </linearGradient>
+                        <clipPath id="clip0_366_7284_c_2_r">
+                            <rect width="56" height="56" rx="7.593" fill="#fff"></rect>
+                        </clipPath>
+                    </defs>
+                    <style>
+                        @keyframes a0_t_c_2_r {
+                            0% {
+                                transform: translate(28px, 28px) scale(0, 0) translate(-28px, -28px);
+                                animation-timing-function: cubic-bezier(0, 0, .58, 1)
+                            }
+
+                            to {
+                                transform: translate(28px, 28px) scale(1, 1) translate(-28px, -28px)
+                            }
+                        }
+
+                        @keyframes a1_o_c_2_r {
+                            0% {
+                                opacity: .6
+                            }
+
+                            to {
+                                opacity: 0
+                            }
+                        }
+                    </style>
+                    <g clip-path="url(#clip0_366_7284_c_2_r)" transform="matrix(0 0 0 0 28 28)"
+                        style="animation: 0.25s linear both a0_t_c_2_r;">
+                        <rect opacity="0.7" width="56" height="56" rx="12" fill="#151C2E"></rect>
+                        <rect opacity="0.6" width="52" height="52" rx="10" fill="url(#Gradient-0_c_2_r24)"
+                            transform="translate(2 2)"></rect>
+                        <rect width="48" height="48" rx="8" fill="url(#Gradient-1_c_2_r24)" transform="translate(4 4)">
+                        </rect>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M14.834 60.127c3.731 1.672 7.732.204 11.798-.231 4.245-.454 9.628 1.157 12.1-2.325 2.466-3.477-1.482-7.917-1.818-12.166-.375-4.74 2.845-10.093-.23-13.719-3.261-3.844-9.295-4.521-14.177-3.264-4.482 1.155-6.48 5.88-9.52 9.37-3.412 3.912-9.48 6.762-9.052 11.935.43 5.202 6.134 8.266 10.899 10.4Z"
+                            fill="url(#Gradient-2_c_2_r24)"></path>
+                        <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd"
+                            d="M8.7 53.292c-3.968.987-7.647-1.164-11.573-2.31-4.098-1.196-9.681-.56-11.498-4.423-1.815-3.857 2.854-7.531 3.935-11.655 1.205-4.599-1.02-10.436 2.648-13.462 3.888-3.208 9.947-2.81 14.53-.711 4.208 1.928 5.34 6.931 7.718 10.902 2.667 4.453 8.137 8.33 6.803 13.346-1.342 5.045-7.497 7.053-12.563 8.313Z"
+                            fill="url(#Gradient-3_c_2_r24)"></path>
+                        <rect opacity="0.6" width="56" height="56" rx="12" fill="#151C2E"
+                            style="animation: 0.25s linear both a1_o_c_2_r;"></rect>
+                    </g>
+                </svg></button>
+            <div class="cells-board-mask">
+                <div class="animated-highlight"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="status-bar">
+    <div class="status-bar__status">
+        <div class="status-bar__icon">
+            <img src="img/stars.svg" alt="">
+        </div>
+    </div>
+    <div class="select-traps status-bar__select-traps"><button class="select-traps__prev-arrow-btn disabled:opacity-50"
+            type="button" id="prev_preset_btn"><svg class="select-traps__arrow-icon select-traps__arrow-icon_prev"
+                viewBox="0 0 13 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M2.92616 20.0002L10.7906 12.082L12.8584 10.0001L10.7906 7.91821L2.92616 0L0.858398 2.0819L8.72287 10.0001L0.858398 17.9183L2.92616 20.0002Z">
+                </path>
+            </svg></button>
+        <div class="select-traps__content"><span class="select-traps__traps_amount" id="trapsAmount">1</span><span
+                class="select-traps__title">traps</span></div><button
+            class="select-traps__next-arrow-btn disabled:opacity-50" type="button" id="next_preset_btn"><svg
+                class="select-traps__arrow-icon" viewBox="0 0 13 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M2.92616 20.0002L10.7906 12.082L12.8584 10.0001L10.7906 7.91821L2.92616 0L0.858398 2.0819L8.72287 10.0001L0.858398 17.9183L2.92616 20.0002Z">
+                </path>
+            </svg></button>
+    </div>
+</div>
+
+<div class="bet-panel ">
+    <div class="bet-panel__actions">
+        <div class="flex flex-wrap flex-row mobile:flex-col mobile:gap-y-3">
+
+            <div class="basis-1/3 pl-2 mobile:pl-0 mobile:basis-auto mobile:h-[3.25rem]"><button id="playButton"
+                    type="button"
+                    class="app-button big games-blue-bg text-white cursor-pointer block h-full w-full"><span>Play</span></button>
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 
 </html>
